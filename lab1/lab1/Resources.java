@@ -19,7 +19,7 @@ public class Resources {
   /**
    * Offset from the wall (cm).
    */
-  public static final int BAND_CENTER = 20;
+  public static final int BAND_CENTER = 25;
   
   /**
    * Width of dead band (cm)
@@ -36,7 +36,7 @@ public class Resources {
    */
   public static final int MOTOR_HIGH = 200;
   
-  public static final int FILTER_OUT = 20; //Number of continuous samples the sensor will ignore (filter out) 
+  public static final int FILTER_OUT = 10; //Number of continuous samples the sensor will ignore (filter out) 
                                            //before measuring the true distance
 
   /**

@@ -30,16 +30,16 @@ public abstract class UltrasonicController {
    * @param distance distance in cm
    */
   void filter(int distance) {
-    if (distance >= 255 && filterControl < FILTER_OUT) {
+    if (distance >= 60 && filterControl < FILTER_OUT) {
       // bad value, do not set the distance var, however do increment the filter value
       filterControl++;
-    } else if (distance >= 255) {
+    } else if (distance >= 150) {
       // Repeated large values, so there is nothing there: leave the distance alone
-      this.distance = distance;
+      this.distance = (int) (distance * Math.sqrt(2)/2);
     } else {
       // distance went below 255: reset filter and leave distance alone.
       filterControl = 0;
-      this.distance = distance;
+      this.distance = (int) (distance * Math.sqrt(2)/2);
     }
   }
   
