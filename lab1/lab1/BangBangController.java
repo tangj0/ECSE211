@@ -10,7 +10,7 @@ public class BangBangController extends UltrasonicController {
     LEFT_MOTOR.forward();
     RIGHT_MOTOR.forward();
   }
-
+   
   @Override
   public void processUSData(int distance) {
     int error = BAND_CENTER - this.distance;

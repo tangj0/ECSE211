@@ -6,7 +6,7 @@ import static lab1.Resources.*;
  * Controller that controls the robot's movements based on ultrasonic data.
  */
 public abstract class UltrasonicController {
-
+  
   int distance;
   
   int filterControl;
