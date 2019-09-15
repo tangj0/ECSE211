@@ -4,11 +4,9 @@ import static lab1.Resources.*;
 
 public class PController extends UltrasonicController { //Proportional Controller
 
-  private static final int MOTOR_SPEED = 150; //rpm
-  
-  private int distance; //Current distance from wall
+  private static final int MOTOR_SPEED = 200; //rpm
   private float speedup;
-  private float errorConstant = 0.5f;
+  private float errorConstant = 0.01f;
   
   public PController() {
     LEFT_MOTOR.setSpeed(MOTOR_SPEED); // Initialize motor rolling forward
@@ -16,18 +14,18 @@ public class PController extends UltrasonicController { //Proportional Controlle
     LEFT_MOTOR.forward();
     RIGHT_MOTOR.forward();
  
-    filterControl = 0;
+    //filterControl = 0;
   }
 
   @Override
-  public void processUSData(int inputDistance) {
+  public void processUSData(int distance) {
     // Process robot movement based on the distance passed in from the UltrasonicPoller
     // Structure = Main -> UltrasonicPoller -> processUSData()
     
-    filter(inputDistance); //from UltrasonicController, filters bad values from input
+    filter(distance); //from UltrasonicController, filters bad values from input
 
-    int error = Math.abs(BAND_CENTER - this.distance); 
-    this.speedup = error * this.errorConstant * MOTOR_SPEED;
+    int error = BAND_CENTER - this.distance; 
+    this.speedup = Math.abs(error) * this.errorConstant * MOTOR_SPEED;
     
     //For a robot moving counter-clockwise
     //Within dead band, go straight
@@ -39,17 +37,31 @@ public class PController extends UltrasonicController { //Proportional Controlle
     }
     //Too far from wall, veer left
     else if (error < 0) { 
-      LEFT_MOTOR.setSpeed(MOTOR_SPEED);
-      RIGHT_MOTOR.setSpeed(MOTOR_SPEED + speedup);
-      LEFT_MOTOR.forward();
-      RIGHT_MOTOR.forward();
+      if (error > -5) { //far from wall but not too far
+        LEFT_MOTOR.setSpeed(MOTOR_SPEED);
+        RIGHT_MOTOR.setSpeed(MOTOR_SPEED + speedup/2);
+        LEFT_MOTOR.forward();
+        RIGHT_MOTOR.forward();
+      } else {
+        LEFT_MOTOR.setSpeed(MOTOR_SPEED);
+        RIGHT_MOTOR.setSpeed(MOTOR_SPEED + speedup);
+        LEFT_MOTOR.forward();
+        RIGHT_MOTOR.forward();
+      }
     } 
     //Too close to wall (error > 0) , veer right
     else {
-      LEFT_MOTOR.setSpeed(MOTOR_SPEED + speedup); 
-      RIGHT_MOTOR.setSpeed(MOTOR_SPEED);
-      LEFT_MOTOR.forward();
-      RIGHT_MOTOR.forward();
+      if (error < 5) {
+        LEFT_MOTOR.setSpeed(MOTOR_SPEED + speedup/2); 
+        RIGHT_MOTOR.setSpeed(MOTOR_SPEED);
+        LEFT_MOTOR.forward();
+        RIGHT_MOTOR.forward();
+      } else {
+        LEFT_MOTOR.setSpeed(MOTOR_SPEED + speedup); 
+        RIGHT_MOTOR.setSpeed(MOTOR_SPEED);
+        LEFT_MOTOR.forward();
+        RIGHT_MOTOR.forward();
+      }
     }
     
     //Let other processes access cpu after program completion
