@@ -29,17 +29,18 @@ public abstract class UltrasonicController {
    * Rudimentary filter - toss out invalid samples corresponding to null signal.
    * @param distance distance in cm
    */
-  void filter(int distance, int filterOutNum) {
-    if (distance >= 60 && filterControl < filterOutNum) {
+  
+  void filter(int distance, int filterOutNum, int num1, int num2) {
+    if (distance >= num1 && filterControl < filterOutNum) {
       // bad value, do not set the distance var, however do increment the filter value
       filterControl++;
-    } else if (distance >= 150) {
+    } else if (distance >= num2) {
       // Repeated large values, so there is nothing there: leave the distance alone
-      this.distance = (int) (distance * Math.sqrt(2)/2);
+      this.distance = (int)(distance * Math.sqrt(2)/2); 
     } else {
       // distance went below 255: reset filter and leave distance alone.
       filterControl = 0;
-      this.distance = (int) (distance * Math.sqrt(2)/2);
+      this.distance = (int)(distance * Math.sqrt(2)/2);
     }
   }
   
