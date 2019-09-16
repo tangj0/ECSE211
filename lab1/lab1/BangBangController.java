@@ -14,7 +14,8 @@ public class BangBangController extends UltrasonicController {
   @Override
   public void processUSData(int distance) {
     int error = BAND_CENTER - this.distance;
-    filter(distance);
+    int filterOut = FILTER_OUT;
+    filter(distance, filterOut);
     // TODO: process a movement based on the us distance passed in (BANG-BANG style)
 
     if (Math.abs(error) <= BAND_WIDTH) {

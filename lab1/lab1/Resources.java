@@ -38,7 +38,8 @@ public class Resources {
   
   public static final int FILTER_OUT = 10; //Number of continuous samples the sensor will ignore (filter out) 
                                            //before measuring the true distance
-
+  public static final int FILTER_OUT_P = 7;
+  
   /**
    * The LCD screen used for displaying text.
    */

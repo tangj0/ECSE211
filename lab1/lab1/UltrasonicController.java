@@ -29,8 +29,8 @@ public abstract class UltrasonicController {
    * Rudimentary filter - toss out invalid samples corresponding to null signal.
    * @param distance distance in cm
    */
-  void filter(int distance) {
-    if (distance >= 60 && filterControl < FILTER_OUT) {
+  void filter(int distance, int filterOutNum) {
+    if (distance >= 60 && filterControl < filterOutNum) {
       // bad value, do not set the distance var, however do increment the filter value
       filterControl++;
     } else if (distance >= 150) {

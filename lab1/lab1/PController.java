@@ -24,7 +24,8 @@ public class PController extends UltrasonicController { //Proportional Controlle
     // Process robot movement based on the distance passed in from the UltrasonicPoller
     // Structure = Main -> UltrasonicPoller -> processUSData()
     
-    filter(inputDistance); //from UltrasonicController, filters bad values from input
+    int filterOut = FILTER_OUT_P;
+    filter(inputDistance, filterOut); //from UltrasonicController, filters bad values from input
 
     int error = Math.abs(BAND_CENTER - this.distance); 
     this.speedup = error * this.errorConstant * MOTOR_SPEED;
