@@ -27,11 +27,11 @@ public class Resources {
   public static final int BAND_WIDTH = 4; //robot can be +- bandwidth away from bandcenter
   public static final int BAND_WIDTH_P = 2;
   
-  /**
+  /**  
    * Speed of slower rotating wheel (deg/sec).
    */
   public static final int MOTOR_LOW = 100;
-  
+    
   /**
    * Speed of the faster rotating wheel (deg/sec).
    */
@@ -40,6 +40,7 @@ public class Resources {
   public static final int FILTER_OUT = 10; //Number of continuous samples the sensor will ignore (filter out) 
                                            //before measuring the true distance
   public static final int FILTER_OUT_P = 7;
+
   /**
    * The LCD screen used for displaying text.
    */
