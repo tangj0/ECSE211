@@ -31,10 +31,10 @@ public abstract class UltrasonicController {
    */
   
   void filter(int distance, int filterOutNum, int num1, int num2) {
-    if (distance >= 255 && filterControl < filterOutNum) {
+    if (distance >= num1 && filterControl < filterOutNum) {
       // bad value, do not set the distance var, however do increment the filter value
       filterControl++;
-    } else if (distance >= 255) {
+    } else if (distance >= num2) {
       // Repeated large values, so there is nothing there: leave the distance alone
       this.distance = (int)(distance * Math.sqrt(2)/2); 
     } else {
