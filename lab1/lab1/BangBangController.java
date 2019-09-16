@@ -10,11 +10,12 @@ public class BangBangController extends UltrasonicController {
     LEFT_MOTOR.forward();
     RIGHT_MOTOR.forward();
   }
-
+   
   @Override
   public void processUSData(int distance) {
-    filter(distance);
-
+    int error = BAND_CENTER - this.distance;
+    int filterOut = FILTER_OUT;
+    filter(distance, filterOut);
     // TODO: process a movement based on the us distance passed in (BANG-BANG style)
   }
 
