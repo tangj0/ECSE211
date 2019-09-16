@@ -30,7 +30,7 @@ public abstract class UltrasonicController {
    * @param distance distance in cm
    */
   
-  void filter(int distance, int filterOutNum) {
+  void filter(int distance, int filterOutNum, int num1, int num2) {
     if (distance >= 255 && filterControl < filterOutNum) {
       // bad value, do not set the distance var, however do increment the filter value
       filterControl++;

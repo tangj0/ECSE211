@@ -21,7 +21,7 @@ public class PController extends UltrasonicController { //Proportional Controlle
     // Structure = Main -> UltrasonicPoller -> processUSData()
     
     int filterOut = FILTER_OUT_P;
-    filter(distance, filterOut); //from UltrasonicController, filters bad values from input
+    filter(distance, filterOut, 255, 255); //from UltrasonicController, filters bad values from input
 
     int error = BAND_CENTER - this.distance; 
     speedup = Math.abs(error) * fastConstant;
