@@ -29,7 +29,7 @@ public class BangBangController extends UltrasonicController {
       RIGHT_MOTOR.setSpeed(MOTOR_HIGH); // Increase speed outside wheel
       LEFT_MOTOR.forward();
       RIGHT_MOTOR.forward();
-    }
+    }  
     // If robot is too close from the wall, we must increase speed of inside wheel and decrease speed of outside wheel
     else if (error > 0) {
       LEFT_MOTOR.setSpeed(MOTOR_HIGH);

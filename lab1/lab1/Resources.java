@@ -30,7 +30,7 @@ public class Resources {
    * Speed of slower rotating wheel (deg/sec).
    */
   public static final int MOTOR_LOW = 100;
-  
+    
   /**
    * Speed of the faster rotating wheel (deg/sec).
    */
