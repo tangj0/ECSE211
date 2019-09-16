@@ -4,9 +4,9 @@ import static lab1.Resources.*;
 
 public class PController extends UltrasonicController { //Proportional Controller
 
-  private static final int MOTOR_SPEED = 140; //rpm
+  private static final int MOTOR_SPEED = 180; //rpm
   private float speedup;
-  private float fastConstant = 0.5f;
+  private float fastConstant = 1.2f;
   
   public PController() {
     LEFT_MOTOR.setSpeed(MOTOR_SPEED); // Initialize motor rolling forward
@@ -39,9 +39,23 @@ public class PController extends UltrasonicController { //Proportional Controlle
       RIGHT_MOTOR.forward();
       }
     //Too far from wall, go left
-    else if (error < 0) {
+    else if (error < 0 && error > -4) {
       LEFT_MOTOR.setSpeed(MOTOR_SPEED);
-      RIGHT_MOTOR.setSpeed(MOTOR_SPEED + (int)2.1*speedup);
+      RIGHT_MOTOR.setSpeed(MOTOR_SPEED + (int)2.6*speedup);
+      LEFT_MOTOR.forward();
+      RIGHT_MOTOR.forward();
+    } 
+    //Farther than 2nd case, go left more
+    else if (error <= -4 && error >= -7) {
+      LEFT_MOTOR.setSpeed(MOTOR_SPEED);
+      RIGHT_MOTOR.setSpeed(MOTOR_SPEED + (int)2.75*speedup);
+      LEFT_MOTOR.forward();
+      RIGHT_MOTOR.forward();
+    }
+    //Much too far from the wall, go left most
+    else if (error < -7){
+      LEFT_MOTOR.setSpeed(MOTOR_SPEED);
+      RIGHT_MOTOR.setSpeed(MOTOR_SPEED + (int)2.95*speedup);
       LEFT_MOTOR.forward();
       RIGHT_MOTOR.forward();
     }
