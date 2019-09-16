@@ -44,14 +44,14 @@ public class BangBangController extends UltrasonicController {
       LEFT_MOTOR.forward();
       RIGHT_MOTOR.forward();
     }
- /*
+ 
     try{
       Thread.sleep(50); 
       //After program is run, the thread is told to sleep so other processes can access CPU
       }
     catch(Exception e){
     e.printStackTrace(); 
-    } */
+    } 
   }
 
   @Override

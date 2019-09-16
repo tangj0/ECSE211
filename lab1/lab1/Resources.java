@@ -24,7 +24,7 @@ public class Resources {
   /**
    * Width of dead band (cm)
    */
-  public static final int BAND_WIDTH = 3; //robot can be +- bandwidth away from bandcenter
+  public static final int BAND_WIDTH = 4; //robot can be +- bandwidth away from bandcenter
   
   /**  
    * Speed of slower rotating wheel (deg/sec).
