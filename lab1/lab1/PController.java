@@ -39,34 +39,34 @@ public class PController extends UltrasonicController { //Proportional Controlle
       RIGHT_MOTOR.forward();
       }
     //Too far from wall, go left
-    else if (error > 0 && error < 8) {
+    else if (error > 0 && error < 4) {
       LEFT_MOTOR.setSpeed(MOTOR_SPEED);
       RIGHT_MOTOR.setSpeed(MOTOR_SPEED + (int)2.6*speedup);
       LEFT_MOTOR.forward();
       RIGHT_MOTOR.forward();
     } 
     //Farther than 2nd case, go left more
-    else if (error >= 8 && error < 12) {
+    else if (error >= 4 && error < 8) {
       LEFT_MOTOR.setSpeed(MOTOR_SPEED);
       RIGHT_MOTOR.setSpeed(MOTOR_SPEED + (int)2.75*speedup);
       LEFT_MOTOR.forward();
       RIGHT_MOTOR.forward();
     }
     //Much too far from the wall, go left most
-    else if (error > 12){
+    else if (error > 8){
       LEFT_MOTOR.setSpeed(MOTOR_SPEED);
       RIGHT_MOTOR.setSpeed(MOTOR_SPEED + (int)2.95*speedup);
       LEFT_MOTOR.forward();
       RIGHT_MOTOR.forward();
     }
     //Too close to wall, go right
-    else if (error < 0 && error > -15){ 
+    else if (error < 0 && error > -10){ 
       LEFT_MOTOR.setSpeed(MOTOR_SPEED + 3*speedup); 
       RIGHT_MOTOR.setSpeed(MOTOR_SPEED);
       LEFT_MOTOR.forward();
       RIGHT_MOTOR.forward();
       } 
-    //Error < -15, much too close to wall, backup
+    //Error < -10, much too close to wall, backup
     else { 
       LEFT_MOTOR.setSpeed(10); 
       RIGHT_MOTOR.setSpeed(MOTOR_SPEED + 2*speedup);
