@@ -34,7 +34,7 @@ public class PController extends UltrasonicController { //Proportional Controlle
     //Within dead band, go straight
     if (Math.abs(error) <= BAND_WIDTH_P) {
       LEFT_MOTOR.setSpeed(MOTOR_SPEED);
-      RIGHT_MOTOR.setSpeed(MOTOR_SPEED);
+      RIGHT_MOTOR.setSpeed(MOTOR_SPEED);  
       LEFT_MOTOR.forward();
       RIGHT_MOTOR.forward();
       }

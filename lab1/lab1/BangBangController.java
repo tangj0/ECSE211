@@ -51,7 +51,7 @@ public class BangBangController extends UltrasonicController {
       LEFT_MOTOR.setSpeed(MOTOR_HIGH);
       RIGHT_MOTOR.setSpeed(MOTOR_HIGH);
       LEFT_MOTOR.forward();
-      RIGHT_MOTOR.forward();
+      RIGHT_MOTOR.forward();  
     }
 
   }

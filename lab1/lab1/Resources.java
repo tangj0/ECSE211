@@ -18,7 +18,7 @@ public class Resources {
   
   /**
    * Offset from the wall (cm).
-   */
+   */  
   public static final int BAND_CENTER = 40;
   public static final int BAND_CENTER_P = 20;
   
