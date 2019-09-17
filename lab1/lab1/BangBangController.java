@@ -13,10 +13,10 @@ public class BangBangController extends UltrasonicController {
    
   @Override
   public void processUSData(int distance) {
-    int error = BAND_CENTER - this.distance;
+    int error = distance - BAND_CENTER;
     int filterOut = FILTER_OUT;
 
-    filter(distance, filterOut, 60, 150);
+    filter(distance, filterOut, 125, 175);
 
     // TODO: process a movement based on the us distance passed in (BANG-BANG style)
 
@@ -27,18 +27,24 @@ public class BangBangController extends UltrasonicController {
       RIGHT_MOTOR.forward();
     }    
     // If robot is too far from the wall, increase speed for outside wheel decrease speed for inside wheel
-    else if (error < 0) {
+    else if (error > 0) {
       LEFT_MOTOR.setSpeed(MOTOR_LOW); // Decrease speed inside wheel
       RIGHT_MOTOR.setSpeed(MOTOR_HIGH); // Increase speed outside wheel
       LEFT_MOTOR.forward();
       RIGHT_MOTOR.forward();
     }  
     // If robot is too close from the wall, we must increase speed of inside wheel and decrease speed of outside wheel
-    else if (error > 0) {
+    else if (error < 0 && error > -20) {
       LEFT_MOTOR.setSpeed(MOTOR_HIGH);
       RIGHT_MOTOR.setSpeed(MOTOR_LOW);
       LEFT_MOTOR.forward();
       RIGHT_MOTOR.forward();
+    }
+    else if (error <= -20) {
+      LEFT_MOTOR.setSpeed(10); 
+      RIGHT_MOTOR.setSpeed(MOTOR_HIGH);
+      LEFT_MOTOR.backward();
+      RIGHT_MOTOR.backward();
     }
     // The robot can continue on the same path because it isn't too close or too far from wall
     else {
@@ -47,14 +53,7 @@ public class BangBangController extends UltrasonicController {
       LEFT_MOTOR.forward();
       RIGHT_MOTOR.forward();
     }
- 
-    try{
-      Thread.sleep(50); 
-      //After program is run, the thread is told to sleep so other processes can access CPU
-      }
-    catch(Exception e){
-    e.printStackTrace(); 
-    } 
+
   }
 
   @Override

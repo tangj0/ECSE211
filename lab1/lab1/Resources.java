@@ -19,13 +19,13 @@ public class Resources {
   /**
    * Offset from the wall (cm).
    */
-  public static final int BAND_CENTER = 25;
-  public static final int BAND_CENTER_P = 7;
+  public static final int BAND_CENTER = 40;
+  public static final int BAND_CENTER_P = 20;
   
   /**
    * Width of dead band (cm)
    */
-  public static final int BAND_WIDTH = 4; //robot can be +- bandwidth away from bandcenter
+  public static final int BAND_WIDTH = 3; //robot can be +- bandwidth away from bandcenter
   public static final int BAND_WIDTH_P = 2;
   
   /**  
@@ -38,7 +38,7 @@ public class Resources {
    */
   public static final int MOTOR_HIGH = 200;
   
-  public static final int FILTER_OUT = 10; //Number of continuous samples the sensor will ignore (filter out) 
+  public static final int FILTER_OUT = 15; //Number of continuous samples the sensor will ignore (filter out) 
                                            //before measuring the true distance
   public static final int FILTER_OUT_P = 7;
 
