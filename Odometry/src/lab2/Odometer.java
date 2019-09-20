@@ -23,7 +23,7 @@ public class Odometer implements Runnable {
   /**
    * The x-axis position in cm.
    */
-  private volatile double x;
+  private volatile double x; //A volatile variable will be modified by different threads
   
   /**
    * The y-axis position in cm.
@@ -109,20 +109,28 @@ public class Odometer implements Runnable {
 
       leftMotorTachoCount = leftMotor.getTachoCount();
       rightMotorTachoCount = rightMotor.getTachoCount();
-
-      double distL, distR, deltaD, dtheta, dx, dy;
       
-      distL = 3.14159*WHEEL_RAD*(leftMotorTachoCount-lastTachoL)/180; // compute wheel
-      distR = 3.14159*WHEEL_RAD*(rightMotorTachoCount-lastTachoR)/180; // displacements
-      lastTachoL = leftMotorTachoCount; // save tacho counts for next iteration
-      lastTachoR = rightMotorTachoCount;
-      deltaD = 0.5 * (distL+distR); // compute vehicle displacement
-      dtheta = (distL-distR)/WHEEL_RAD; // compute change in heading
-      theta += dtheta; // update heading
-      dx = deltaD * Math.sin(theta); // compute X component of displacement
-      dy = deltaD * Math.cos(theta); // compute Y component of displacement
+      // TODO Calculate new robot position based on tachometer counts
       // TODO Update odometer values with new calculated values, eg
       //odo.update(dx, dy, dtheta);
+      //////////////////////////////////////////////////////////////
+      
+      double distL, distR, deltaD, dtheta, dx, dy;
+      
+      distL = 3.14159*WHEEL_RAD*(leftMotorTachoCount-lastTachoL)/180; // compute wheel displacements
+      distR = 3.14159*WHEEL_RAD*(rightMotorTachoCount-lastTachoR)/180; 
+      
+      lastTachoL = leftMotorTachoCount; // save tacho counts for next iteration
+      lastTachoR = rightMotorTachoCount;
+      
+      deltaD = 0.5 * (distL+distR); // compute vehicle displacement
+      dtheta = (distL-distR)/TRACK; // compute change in heading = change in angle 
+                                    // why not dtheta = sin((distL-distR)/TRACK?
+      theta += dtheta; // update heading
+      
+      dx = deltaD * Math.sin(theta); // compute X component of displacement
+      dy = deltaD * Math.cos(theta); // compute Y component of displacement
+     
       odo.update(dx, dy, dtheta);
       
       double position[] = new double[3];
@@ -130,6 +138,9 @@ public class Odometer implements Runnable {
       position[0] = x;
       position[1] = y;
       position[2] = theta;
+      
+      /////////////////////////////////////////////////////////////
+      
       // this ensures that the odometer only runs once every period
       updateEnd = System.currentTimeMillis();
       if (updateEnd - updateStart < ODOMETER_PERIOD) {
