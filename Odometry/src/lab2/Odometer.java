@@ -39,6 +39,16 @@ public class Odometer implements Runnable {
    * The (x, y, theta) position as an array
    */
   private double[] position;
+  
+  /*
+   * Class Variables
+   */
+  public static int lastTachoL; // Tacho L at last sample
+  public static int lastTachoR; // Tacho R at last sample
+  
+  /*
+   * Class constants
+   */
 
   // Thread control tools
   /**
@@ -66,7 +76,6 @@ public class Odometer implements Runnable {
    * The odometer update period in ms.
    */
   private static final long ODOMETER_PERIOD = 25;
-
   
   /**
    * This is the default constructor of this class. It initiates all motors and variables once.It
@@ -101,11 +110,26 @@ public class Odometer implements Runnable {
       leftMotorTachoCount = leftMotor.getTachoCount();
       rightMotorTachoCount = rightMotor.getTachoCount();
 
-      // TODO Calculate new robot position based on tachometer counts
+      double distL, distR, deltaD, dtheta, dx, dy;
       
+      distL = 3.14159*WHEEL_RAD*(leftMotorTachoCount-lastTachoL)/180; // compute wheel
+      distR = 3.14159*WHEEL_RAD*(rightMotorTachoCount-lastTachoR)/180; // displacements
+      lastTachoL = leftMotorTachoCount; // save tacho counts for next iteration
+      lastTachoR = rightMotorTachoCount;
+      deltaD = 0.5 * (distL+distR); // compute vehicle displacement
+      dtheta = (distL-distR)/WHEEL_RAD; // compute change in heading
+      theta += dtheta; // update heading
+      dx = deltaD * Math.sin(theta); // compute X component of displacement
+      dy = deltaD * Math.cos(theta); // compute Y component of displacement
       // TODO Update odometer values with new calculated values, eg
       //odo.update(dx, dy, dtheta);
-
+      odo.update(dx, dy, dtheta);
+      
+      double position[] = new double[3];
+      
+      position[0] = x;
+      position[1] = y;
+      position[2] = theta;
       // this ensures that the odometer only runs once every period
       updateEnd = System.currentTimeMillis();
       if (updateEnd - updateStart < ODOMETER_PERIOD) {
