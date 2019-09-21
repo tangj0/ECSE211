@@ -7,11 +7,11 @@ import static lab2.Resources.*;
  * This class is used to drive the robot on the demo floor.
  */
 public class SquareDriver {
-
   /**
    * Drives the robot in a square of size 3x3 Tiles. It is to be run in parallel
    * with the odometer and odometer correction classes to allow testing their functionality.
    */
+  
   public static void drive() {
     // spawn a new Thread to avoid this method blocking
     (new Thread() {

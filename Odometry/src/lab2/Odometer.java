@@ -125,11 +125,11 @@ public class Odometer implements Runnable {
       
       deltaD = 0.5 * (distL+distR); // compute vehicle displacement
       dtheta = (distL-distR)/TRACK; // compute change in heading = change in angle 
-                                    // why not dtheta = sin((distL-distR)/TRACK?
+                                    
       theta += dtheta; // update heading
       
-      dx = deltaD * Math.sin(theta); // compute X component of displacement
-      dy = deltaD * Math.cos(theta); // compute Y component of displacement
+      dx = deltaD * Math.cos(theta); // compute X component of displacement
+      dy = deltaD * Math.sin(theta); // compute Y component of displacement
      
       odo.update(dx, dy, dtheta);
       
