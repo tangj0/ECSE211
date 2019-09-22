@@ -1,20 +1,27 @@
 package lab2;
 
 import static lab2.Resources.*;
+import lejos.robotics.SampleProvider;
+import lejos.hardware.Sound;
 
 public class OdometryCorrection implements Runnable {
   private static final long CORRECTION_PERIOD = 10;
-  public static final int blackThreshold = 100; // Tested value of color blackThreshold
+  public static final int blackThreshold = 90; // 90 Tested value of color blackThreshold
   private float colorData[]; // Array to store sensor data
-  private float lastColor; // Stores last sensor value to avoid false positives
-  private int lineCount; // Number of lines crossed, from 0 to 8
-  private double[] currentPos;  // Adjusted x,y,theta positions to pass into odometer
-  private double xOffset, yOffset; //Measured initial x and y offsets from origin
+  private SampleProvider sampleProvider;
+  
+  private boolean onLine; // Boolean to prevent false positives
+  private int count; // Number of lines crossed, from 0 to 8
+  private double[] xyt;  // Adjusted x,y,theta positions to pass into odometer
+  private double xOffset, yOffset; //Offsets from origin
+  double tempXOffset1, tempXOffset2, tempYOffset1, tempYOffset2; // For calculating x and y Offset by taking (temp1 + temp2) / 2
 
   public OdometryCorrection() {
+    sampleProvider = colorSensor.getMode("Red"); // Set sensor mode
     colorData = new float[colorSensor.sampleSize()]; // Current color data
-    lineCount = 0;
-    currentPos = new double[3];
+    count = 0;
+    xyt = new double[2];
+    onLine = false;
   }
 
   public void run() {
@@ -22,63 +29,74 @@ public class OdometryCorrection implements Runnable {
 
     while (true) {
       correctionStart = System.currentTimeMillis();
-
-      // TODO Trigger correction (When do I have information to correct?)
-
-      // TODO Calculate new (accurate) robot position
-
-      // TODO Update odometer with new calculated (and more accurate) values, eg:
-      // odometer.setXYT(0.3, 19.23, 5.0);
+      sampleProvider.fetchSample(colorData, 0);
+      colorData[0] *= 1000; // Scale up color intensity 
       
-      if (lastColor < blackThreshold) {
-        lastColor = colorData[0];
-      }
-      if (colorData[0] < blackThreshold && lastColor > blackThreshold) {
-        lineCount++;
-        if (lineCount == 0) {
-          currentPos[0] = 0; // Set x
-          currentPos[1] = 0; // Set y
-          currentPos[2] = 0; // Set theta
-        } 
+      xyt[0] = odometer.getXYT()[0]; // Set x
+      xyt[1] = odometer.getXYT()[1]; // Set y
+      
+      // Calculate and update odometer with new accurate positions
+      if (colorData[0] < blackThreshold && !onLine) {
+        count++;
+        onLine = true;
+        Sound.playNote(Sound.FLUTE, 440, 250); 
         
-        // Set y and theta
-        else if (lineCount == 1 || lineCount == 6) {
-          currentPos[1] = TILE_SIZE;
-          if (lineCount == 1) {
-            yOffset = odometer.getXYT()[1]; // Saving y offset
-          }
-        } 
-        else if (lineCount == 2 || lineCount == 5) {
-          currentPos[1] = TILE_SIZE * 2; 
-          if (lineCount == 5) {
-            currentPos[2] = 180;
-          }
-        } 
+        if (count == 0) {
+          xyt[0] = 0; 
+          xyt[1] = 0; 
+        }
         
-        // Set x and theta
-        else if (lineCount == 3) {
-          currentPos[0] = TILE_SIZE;
-          currentPos[2] = 90;
-          xOffset = odometer.getXYT()[0];
-        }
-        else if (lineCount == 8) {
-          currentPos[0] = xOffset;
-          currentPos[1] = yOffset;
-          currentPos[2] = 360;
-        }
-        else if (lineCount == 4 || lineCount == 7) {
-          currentPos[0] = TILE_SIZE * 2; 
-
-          if (lineCount == 7) {
-            currentPos[2] = 270;
+        // Set y
+        else if (count > 0 && count <= 3) {
+          xyt[1] = count*TILE_SIZE;
+          if (count == 1) {
+            tempYOffset1 = odometer.getXYT()[1];
           }
-        } 
+        }
+        else if (count > 6 && count <= 9) {
+          xyt[1] = 3*TILE_SIZE - ((count - 7)*TILE_SIZE);
+        }
+        
+        // Set x 
+        else if (count > 3 && count <= 6) {
+          if (count == 4) {
+            tempXOffset1 = odometer.getXYT()[0];
+          }
+          if (count == 6) {
+            tempXOffset2 = 3*TILE_SIZE - odometer.getXYT()[0]; 
+          }
+          xyt[0] = (count-3)*TILE_SIZE;
+        }
+        else if (count > 9 && count <= 12) {
+          xyt[0] = 3*TILE_SIZE - ((count -10)*TILE_SIZE);
+          if (count == 12) {
+            tempYOffset2 = odometer.getXYT()[1]; // Getting same side offset as y1
+          }
+        }
         else {
           break;
         }
+        odometer.setXY(xyt[0], xyt[1]); 
       }
-      lastColor = colorData[0];
-      odometer.setXYT(currentPos[0], currentPos[1], currentPos[2]);
+      
+      onLine = false; // Update boolean
+      //LCD.drawString("Sample: " + colorData[0], 0, 3);
+      //LCD.drawString("Count: " + count, 0, 4);
+      LCD.drawString("tempXOffset1 " + tempXOffset1, 0, 3);
+      LCD.drawString("tempXOffset2 " + tempXOffset2, 0, 4);
+      LCD.drawString("tempYOffset1 " + tempYOffset1, 0, 5);
+      LCD.drawString("tempYOffset2 " + tempYOffset2, 0, 6);
+//      LCD.drawString("xOffset " + xOffset, 0, 5);
+//      LCD.drawString("yOffset " + yOffset, 0, 6);
+      LCD.drawString("Count: " + count, 0, 7);
+      if (count == 12) {
+        xOffset = (tempXOffset1 + tempXOffset2)/2;
+        yOffset = (tempYOffset1 + tempYOffset2)/2;
+        xyt[0] = xOffset;
+        xyt[1] = yOffset;
+      }
+      
+      odometer.setXY(xyt[0], xyt[1]);
 
 
       // This ensures the odometry correction occurs only once every period

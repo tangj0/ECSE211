@@ -17,22 +17,26 @@ public class Resources {
   /**
    * The wheel radius in centimeters.
    */
-  public static final double WHEEL_RAD = 2.130;
+ 
+  public static final double WHEEL_RAD = 2.13; //2.13
   
   /**
    * The robot width in centimeters.
    */
-  public static final double TRACK = 10.7;
+  public static final double TRACK = 12.3; //
   
   /**
    * The speed at which the robot moves forward in degrees per second.
    */
-  public static final int FORWARD_SPEED = 250;
+  
+ public static final float FORWARD_SPEED = 160; 
+  
   
   /**
    * The speed at which the robot rotates in degrees per second.
    */
-  public static final int ROTATE_SPEED = 150;
+  
+  public static final int ROTATE_SPEED = 140;
   
   /**
    * The motor acceleration in degrees per second squared.
@@ -47,7 +51,7 @@ public class Resources {
   /**
    * The tile size in centimeters.
    */
-  public static final double TILE_SIZE = 30.48;
+  public static final double TILE_SIZE = 30.48; // 3*TILE_SIZE = 91.44
   
   /**
    * The left motor.

@@ -113,8 +113,8 @@ public class Odometer implements Runnable {
       // Calculate new robot position based on tachometer counts
       double distL, distR, deltaD, dtheta, dx, dy;
       
-      distL = 3.14159*WHEEL_RAD*(leftMotorTachoCount-lastTachoL)/180; // compute wheel displacements
-      distR = 3.14159*WHEEL_RAD*(rightMotorTachoCount-lastTachoR)/180; 
+      distL = 3.141592*WHEEL_RAD*(leftMotorTachoCount-lastTachoL)/180; // compute wheel displacements
+      distR = 3.141592*WHEEL_RAD*(rightMotorTachoCount-lastTachoR)/180; 
       
       lastTachoL = leftMotorTachoCount; // save tacho counts for next iteration
       lastTachoR = rightMotorTachoCount;
@@ -216,7 +216,21 @@ public class Odometer implements Runnable {
       lock.unlock();
     }
   }
-
+  
+  // Separate function to set X and y from odometer correction
+  // Because don't need to set theta
+  public void setXY(double x, double y) {
+    lock.lock();
+    isResetting = true;
+    try {
+      this.x = x;
+      this.y = y;
+      isResetting = false;
+      doneResetting.signalAll();
+    } finally {
+      lock.unlock();
+    }
+  }
   /**
    * Overwrites x. Use for odometry correction.
    * 

@@ -31,15 +31,15 @@ public class SquareDriver {
           leftMotor.setSpeed(FORWARD_SPEED);
           rightMotor.setSpeed(FORWARD_SPEED);
 
-          leftMotor.rotate(convertDistance(3 * TILE_SIZE), true);
-          rightMotor.rotate(convertDistance(3 * TILE_SIZE), false);
+          leftMotor.rotate(convertDistance(3 * TILE_SIZE, WHEEL_RAD), true); // 194.77
+          rightMotor.rotate(convertDistance(3 * TILE_SIZE, WHEEL_RAD), false); 
 
           // turn 90 degrees clockwise
           leftMotor.setSpeed(ROTATE_SPEED);
           rightMotor.setSpeed(ROTATE_SPEED);
 
-          leftMotor.rotate(convertAngle(90.0), true);
-          rightMotor.rotate(-convertAngle(90.0), false);
+          leftMotor.rotate(convertAngle(90, WHEEL_RAD), true);
+          rightMotor.rotate(-convertAngle(90, WHEEL_RAD), false);
         }
       }
     }).start();
@@ -51,8 +51,8 @@ public class SquareDriver {
    * @param distance
    * @return the wheel rotations necessary to cover the distance
    */
-  public static int convertDistance(double distance) {
-    return (int) ((180.0 * distance) / (Math.PI * WHEEL_RAD));
+  public static int convertDistance(double distance, double wheelRad) {
+    return (int) ((180.0 * distance) / (Math.PI * wheelRad));
   }
 
   /**
@@ -62,7 +62,7 @@ public class SquareDriver {
    * @param angle
    * @return the wheel rotations necessary to rotate the robot by the angle
    */
-  public static int convertAngle(double angle) {
-    return convertDistance(Math.PI * TRACK * angle / 360.0);
+  public static int convertAngle(double angle, double wheelRad) {
+    return convertDistance(Math.PI * TRACK * angle / 360.0, wheelRad);
   }
 }
