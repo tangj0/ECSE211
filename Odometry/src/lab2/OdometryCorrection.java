@@ -48,10 +48,10 @@ public class OdometryCorrection implements Runnable {
         
         // Set y
         else if (count > 0 && count <= 3) {
-          xyt[1] = count*TILE_SIZE;
           if (count == 1) {
-            tempYOffset1 = odometer.getXYT()[1];
-          }
+          tempYOffset1 = odometer.getXYT()[1];
+        }
+          xyt[1] = count*TILE_SIZE;
         }
         else if (count > 6 && count <= 9) {
           xyt[1] = 3*TILE_SIZE - ((count - 7)*TILE_SIZE);
@@ -68,10 +68,10 @@ public class OdometryCorrection implements Runnable {
           xyt[0] = (count-3)*TILE_SIZE;
         }
         else if (count > 9 && count <= 12) {
-          xyt[0] = 3*TILE_SIZE - ((count -10)*TILE_SIZE);
           if (count == 12) {
             tempYOffset2 = odometer.getXYT()[1]; // Getting same side offset as y1
-          }
+          }  
+          xyt[0] = 3*TILE_SIZE - ((count -10)*TILE_SIZE);
         }
         else {
           break;
