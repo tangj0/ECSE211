@@ -6,8 +6,8 @@ import lejos.hardware.Sound;
 
 public class OdometryCorrection implements Runnable {
   private static final long CORRECTION_PERIOD = 10;
-  public static final int blackThreshold = 88; // 90 Tested value of color blackThreshold
   private float colorData[]; // Array to store sensor data
+  private float currentSample, lastSample;
   private SampleProvider sampleProvider;
   
   private boolean onLine; // Boolean to prevent false positives
@@ -28,16 +28,23 @@ public class OdometryCorrection implements Runnable {
 
   public void run() {
     long correctionStart, correctionEnd;
+    sampleProvider.fetchSample(colorData, 0);
+    colorData[0] *= 1000; // Scale up color intensity
+    currentSample = colorData[0];
+    lastSample = currentSample;
     
     while (true) {
       correctionStart = System.currentTimeMillis();
       sampleProvider.fetchSample(colorData, 0);
       colorData[0] *= 1000; // Scale up color intensity
+      currentSample = colorData[0]; 
+      float sampleRatio = currentSample/lastSample;
+   
       xyt[0] = odometer.getXYT()[0]; // Set x
       xyt[1] = odometer.getXYT()[1]; // Set y 
       
       // Calculate and update odometer with new accurate positions
-      if (colorData[0] < blackThreshold) {
+      if (sampleRatio < 0.9) {
         count++;
         Sound.playNote(Sound.FLUTE, 440, 250); 
         onLine = true;
@@ -67,7 +74,7 @@ public class OdometryCorrection implements Runnable {
         else if (count > 9 && count <= 12) {
           if (count == 12) {
             tempYOffset2 = odometer.getXYT()[1]; //getting bottom of offset
-            tempXOffset2 = odometer.getXYT()[0] - TILE_SIZE; 
+            tempXOffset2 = odometer.getXYT()[0] - TILE_SIZE; // getting left of offset
           }  
           xyt[0] = 3*TILE_SIZE - ((count -10)*TILE_SIZE);
         }
@@ -77,13 +84,7 @@ public class OdometryCorrection implements Runnable {
         odometer.setXY(xyt[0], xyt[1]); 
       }
       onLine = false; // Update boolean
-
-      LCD.drawString("Count: " + count, 0, 3);
-      
-      LCD.drawString("x1: " + tempXOffset1, 0, 4);
-      LCD.drawString("x2: " + tempXOffset2, 0, 5);
-      LCD.drawString("y1: " + tempYOffset1 , 0, 6);
-      LCD.drawString("y2: " + tempYOffset2, 0, 7);
+      lastSample = currentSample;
       
       if (count == 12) {
         xOffset = (tempXOffset1 + tempXOffset2)/2;
@@ -92,6 +93,11 @@ public class OdometryCorrection implements Runnable {
         xyt[1] = yOffset;
       }
       
+      System.out.println(sampleRatio);
+      LCD.drawString("Count: " + count, 0, 4);
+      LCD.drawString("Current: " + currentSample, 0, 5);
+      LCD.drawString("last Sample " + lastSample, 0, 6);
+      LCD.drawString("Sample Ratio " + sampleRatio, 0, 7);
       odometer.setXY(xyt[0], xyt[1]);
 
       // This ensures the odometry correction occurs only once every period

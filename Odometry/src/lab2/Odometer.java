@@ -217,7 +217,7 @@ public class Odometer implements Runnable {
     }
   }
   
-  // Separate function to set X and y from odometer correction
+  // Separate function to set X and Y from odometer correction
   // Because don't need to set theta
   public void setXY(double x, double y) {
     lock.lock();
