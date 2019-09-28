@@ -21,15 +21,18 @@ public class Navigation {
   
   private static double turnAngle;
   
+  private static boolean navigating;
+  
   /*
    * This method returns true if another thread has called travelTo() 
    * or turnTo() and the method has yet to return; false otherwise
    */
   public boolean isNavigating() {
-    return true;
+    return navigating;
   }
   
   public void travelTo(double x, double y) {
+    navigating = true;
     X = Odometer.getOdometer().getXYT()[0]; // gets current X position
     Y = Odometer.getOdometer().getXYT()[1]; // gets current Y position
     currentTheta = Odometer.getOdometer().getXYT()[2]; // gets current heading
@@ -60,6 +63,8 @@ public class Navigation {
 
     leftMotor.rotate(convertDistance(3 * distance, WHEEL_RAD), true);
     rightMotor.rotate(convertDistance(3 * distance, WHEEL_RAD), false); 
+    
+    navigating = false;
   }
   
   /*
