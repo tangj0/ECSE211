@@ -1,4 +1,4 @@
-// Lab2.java
+// Lab2.java  
 package lab2;
 
 import lejos.hardware.Button;
