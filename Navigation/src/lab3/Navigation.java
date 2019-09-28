@@ -10,12 +10,56 @@ public class Navigation {
   private static double currentTheta;
   
   private static double rotationTheta;
+  
+  private static double X;
+  private static double Y;
+  
+  private static double distanceX;
+  private static double distanceY;
+  
+  private static double distance;
+  
+  private static double turnAngle;
+  
+  /*
+   * This method returns true if another thread has called travelTo() 
+   * or turnTo() and the method has yet to return; false otherwise
+   */
   public boolean isNavigating() {
     return true;
   }
   
   public void travelTo(double x, double y) {
+    X = Odometer.getOdometer().getXYT()[0]; // gets current X position
+    Y = Odometer.getOdometer().getXYT()[1]; // gets current Y position
+    currentTheta = Odometer.getOdometer().getXYT()[2]; // gets current heading
     
+    distanceX = x - X; 
+    distanceY = y - Y;
+    
+    turnAngle = Math.atan2(distanceY, distanceX);
+    
+    distance = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+    
+    if (distanceX > 0 && distanceY > 0) {
+      turnTo((90 - Math.abs(turnAngle)));
+    }
+    else if (distanceX > 0 && distanceY < 0) {
+      turnTo(Math.abs(turnAngle) + 90);
+    }
+    else if (distanceX < 0 && distanceY < 0){
+     turnTo((90 - Math.abs(turnAngle)) + 180);
+    }
+    else if (distanceX < 0 && distanceY > 0) {
+      turnTo(Math.abs(turnAngle) + 270);
+    }
+    
+    // drive forward three tiles
+    leftMotor.setSpeed(FORWARD_SPEED);
+    rightMotor.setSpeed(FORWARD_SPEED);
+
+    leftMotor.rotate(convertDistance(3 * distance, WHEEL_RAD), true);
+    rightMotor.rotate(convertDistance(3 * distance, WHEEL_RAD), false); 
   }
   
   /*
@@ -23,22 +67,36 @@ public class Navigation {
    * This method should turn a MINIMAL angle to its target. 
    */
   public void turnTo(double theta) {
-    currentTheta = Odometer.getOdometer().getXYT()[2];
-    rotationTheta = theta - currentTheta;
+    currentTheta = Odometer.getOdometer().getXYT()[2]; // gets current heading
+    rotationTheta = theta - currentTheta; // calculates the angle the robot must turn
     
-    if (rotationTheta > 180) {
+    /*
+     * Will adjust the angle to determine the shortest angle to turn to the 
+     * absolute heading theta
+     */
+    if (rotationTheta > 180) { 
       rotationTheta -= 360;
     }
     
-    if (rotationTheta < 0) {
+    if (rotationTheta < 0) { // will turn the robot left depending on the angle
+      leftMotor.setSpeed(ROTATE_SPEED); 
+      rightMotor.setSpeed(ROTATE_SPEED);
+      
+      /*
+       * takes absolute value of desired angle rotation since sign takes account of direction
+       * in the following .rotate 
+       */
+      rotationTheta = Math.abs(rotationTheta);
+      
+      leftMotor.rotate(-convertAngle(rotationTheta, WHEEL_RAD), true);
+      rightMotor.rotate(convertAngle(rotationTheta, WHEEL_RAD), false);
+    }
+    else { // will turn the robot right depending on the angle
       leftMotor.setSpeed(ROTATE_SPEED);
       rightMotor.setSpeed(ROTATE_SPEED);
-
-      leftMotor.rotate(convertAngle(rotationTheta, WHEEL_RAD), true);
-      rightMotor.rotate(-convertAngle(rotationTheta), WHEEL_RAD), false);
-    }
-    else {
       
+      leftMotor.rotate(convertAngle(rotationTheta, WHEEL_RAD), true);
+      rightMotor.rotate(-convertAngle(rotationTheta, WHEEL_RAD), false);
     }
     convertAngle(rotationTheta, WHEEL_RAD);
   }
