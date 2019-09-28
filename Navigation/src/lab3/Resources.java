@@ -10,6 +10,8 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 
 public class Resources {
   
+  
+  //For Odometer:
   /**
    * The wheel radius in centimeters.
    */
@@ -39,13 +41,33 @@ public class Resources {
   /**
    * The tile size in centimeters.
    */
-  public static final double TILE_SIZE = 30.48; // 3*TILE_SIZE = 91.44
+  public static final double TILE_SIZE = 30.48; 
   
   
-  //Number of continuous samples the ultrasonic sensor will ignore (filter out) 
-  //before measuring the true distance 
+  
+  //For PController
+  /**
+   * Number of continuous samples the ultrasonic sensor will ignore (filter out) 
+   * before measuring the true distance 
+   */
   public static final int FILTER_OUT = 10; 
   
+  /**
+   * Offset from the wall (cm).
+   */  
+  public static final int BAND_CENTER = 20;
+  
+  /**
+   * Width of dead band (cm)
+   */
+  public static final int BAND_WIDTH = 3; //robot can be +- bandwidth away from bandcenter
+  
+  /**
+   * Motor speed
+   */
+  public static final int MOTOR_SPEED = 300; //rpm
+  
+  //Lejos ports
   /**
    * The ultrasonic sensor.
    */
