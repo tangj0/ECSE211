@@ -57,12 +57,12 @@ public class Navigation {
       turnTo(Math.abs(turnAngle) + 270);
     }
     
-    // drive forward three tiles
+    // drive forward distance
     leftMotor.setSpeed(FORWARD_SPEED);
     rightMotor.setSpeed(FORWARD_SPEED);
 
-    leftMotor.rotate(convertDistance(3 * distance, WHEEL_RAD), true);
-    rightMotor.rotate(convertDistance(3 * distance, WHEEL_RAD), false); 
+    leftMotor.rotate(convertDistance(TILE_SIZE * distance, WHEEL_RAD), true);
+    rightMotor.rotate(convertDistance(TILE_SIZE * distance, WHEEL_RAD), false); 
     
     navigating = false;
   }
