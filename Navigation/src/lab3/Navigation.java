@@ -1,5 +1,6 @@
 package lab3;
 
+import static lab3.Resources.*;
 import lab3.PController;
 
 //static import to avoid duplicating variables and make the code easier to read
@@ -23,6 +24,16 @@ public class Navigation {
   
   private static boolean navigating;
   
+public class Navigation implements Runnable {
+  private boolean navigating;
+  
+  public Navigation() {
+
+  }
+  
+  public void run() {
+  
+  }
   /*
    * This method returns true if another thread has called travelTo() 
    * or turnTo() and the method has yet to return; false otherwise

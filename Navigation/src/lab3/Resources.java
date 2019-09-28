@@ -45,6 +45,7 @@ public class Resources {
   
   
   
+  
   //For PController
   /**
    * Number of continuous samples the ultrasonic sensor will ignore (filter out) 
@@ -66,6 +67,16 @@ public class Resources {
    * Motor speed
    */
   public static final int MOTOR_SPEED = 300; //rpm
+  
+  
+  
+  
+  //For Main
+  /**
+   * The LCD screen used for displaying text.
+   */
+  public static final TextLCD TEXT_LCD = LocalEV3.get().getTextLCD();
+  
   
   //Lejos ports
   /**
@@ -95,5 +106,6 @@ public class Resources {
    * The odometer.
    */
   public static Odometer odometer = Odometer.getOdometer();
+ 
   
 }
