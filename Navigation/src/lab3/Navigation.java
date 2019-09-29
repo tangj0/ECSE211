@@ -1,12 +1,12 @@
 package lab3;
 
 import static lab3.Resources.*;
-import lab3.PController;
 
 //static import to avoid duplicating variables and make the code easier to read
 import static lab3.Resources.*;
+import static lab3.Main.waypoints;
 
-public class Navigation {
+public class Navigation implements Runnable {
   
   private static double currentTheta;
   
@@ -24,16 +24,18 @@ public class Navigation {
   
   private static boolean navigating;
   
-public class Navigation implements Runnable {
-  private boolean navigating;
-  
-  public Navigation() {
-
-  }
-  
   public void run() {
-  
+    while (true) {
+      for(int i = 0; i < waypoints.length; i++) {
+        int xCoord = waypoints[i][0];
+        int yCoord = waypoints[i][1];
+        travelTo(xCoord, yCoord);
+      }
+      leftMotor.stop();
+      rightMotor.stop();
+    }
   }
+  
   /*
    * This method returns true if another thread has called travelTo() 
    * or turnTo() and the method has yet to return; false otherwise
@@ -44,9 +46,9 @@ public class Navigation implements Runnable {
   
   public void travelTo(double x, double y) {
     navigating = true;
-    X = Odometer.getOdometer().getXYT()[0]; // gets current X position
-    Y = Odometer.getOdometer().getXYT()[1]; // gets current Y position
-    currentTheta = Odometer.getOdometer().getXYT()[2]; // gets current heading
+    X = odometer.getXYT()[0]; // gets current X position
+    Y = odometer.getXYT()[1]; // gets current Y position
+    currentTheta = odometer.getXYT()[2]; // gets current heading
     
     distanceX = x - X; 
     distanceY = y - Y;
@@ -83,7 +85,7 @@ public class Navigation implements Runnable {
    * This method should turn a MINIMAL angle to its target. 
    */
   public void turnTo(double theta) {
-    currentTheta = Odometer.getOdometer().getXYT()[2]; // gets current heading
+    currentTheta = odometer.getXYT()[2]; // gets current heading
     rotationTheta = theta - currentTheta; // calculates the angle the robot must turn
     
     /*
