@@ -103,7 +103,6 @@ public class Odometer implements Runnable {
    */
   public void run() {
     long updateStart, updateEnd;
-
     while (true) {
       updateStart = System.currentTimeMillis();
 
@@ -217,20 +216,6 @@ public class Odometer implements Runnable {
     }
   }
   
-  // Separate function to set X and Y from odometer correction
-  // Because don't need to set theta
-  public void setXY(double x, double y) {
-    lock.lock();
-    isResetting = true;
-    try {
-      this.x = x;
-      this.y = y;
-      isResetting = false;
-      doneResetting.signalAll();
-    } finally {
-      lock.unlock();
-    }
-  }
   /**
    * Overwrites x. Use for odometry correction.
    * 

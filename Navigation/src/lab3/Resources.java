@@ -20,28 +20,28 @@ public class Resources {
   /**
    * The robot width in centimeters.
    */
-  public static final double TRACK = 12.20; 
+  public static final double TRACK = 12.20; //12.20
   
   /**
    * The speed at which the robot moves forward in degrees per second.
    */ 
- public static final float FORWARD_SPEED = 170; 
+ public static final float FORWARD_SPEED = 170; //170
   
   
   /**
    * The speed at which the robot rotates in degrees per second.
    */
-  public static final int ROTATE_SPEED = 140;
+  public static final int ROTATE_SPEED = 140;//140
   
   /**
    * Timeout period in milliseconds.
    */
-  public static final int TIMEOUT_PERIOD = 3000;
+  public static final int TIMEOUT_PERIOD = 1000;
   
   /**
    * The tile size in centimeters.
    */
-  public static final double TILE_SIZE = 30.48; 
+  public static final double TILE_SIZE = 30.48; //30.48
   
   
   

@@ -9,75 +9,77 @@ import static lab3.Main.waypoints;
 public class Navigation implements Runnable {
   
   private static double currentTheta;
-  
   private static double rotationTheta;
   
-  private static double X;
-  private static double Y;
+  private static double x, y; 
+  private static double deltaX, deltaY;
   
-  private static double distanceX;
-  private static double distanceY;
+  private static double minDistance;
+  private static double theta1, theta2;
   
-  private static double distance;
+  public static int[][] waypoints;
   
-  private static double turnAngle;
-  
-  private static boolean navigating;
+  public Navigation() {
+    waypoints = new int[5][2];
+    
+    
+    //waypoints from map 1
+    waypoints[0] = new int[] {1,3};
+    waypoints[1] = new int[] {2,2};
+    waypoints[2] = new int[] {3,3};
+    waypoints[3] = new int[] {3,2};
+    waypoints[4] = new int[] {2,1};
+
+  }
   
   public void run() {
-    while (true) {
+    // Reset motors and odometer
+    leftMotor.stop();
+    rightMotor.stop();
+    odometer.setXYT(1, 1, 0);
+
+    while(true) {
       for(int i = 0; i < waypoints.length; i++) {
         int xCoord = waypoints[i][0];
         int yCoord = waypoints[i][1];
         travelTo(xCoord, yCoord);
+        LCD.drawString(Integer.toString(xCoord), 0, 6);
       }
-      leftMotor.stop();
-      rightMotor.stop();
     }
   }
   
-  /*
-   * This method returns true if another thread has called travelTo() 
-   * or turnTo() and the method has yet to return; false otherwise
-   */
+  // True if motors are moving
   public boolean isNavigating() {
+    boolean navigating = false;
+    if (leftMotor.isMoving() || rightMotor.isMoving()) {
+      navigating = true;
+    }
     return navigating;
   }
   
-  public void travelTo(double x, double y) {
-    navigating = true;
-    X = odometer.getXYT()[0]; // gets current X position
-    Y = odometer.getXYT()[1]; // gets current Y position
-    currentTheta = odometer.getXYT()[2]; // gets current heading
+  public void travelTo(double xCoord, double yCoord) {
+    // Gets current x, y positions and convert from cm to integer
+    x = Math.round(odometer.getXYT()[0]/TILE_SIZE); 
+    y = Math.round(odometer.getXYT()[1]/TILE_SIZE); 
     
-    distanceX = x - X; 
-    distanceY = y - Y;
+    deltaX = TILE_SIZE*(xCoord - x); 
+    deltaY = TILE_SIZE*(yCoord  - y);
     
-    turnAngle = Math.atan2(distanceY, distanceX);
+    // Turn
+    theta2 = Math.toDegrees(Math.atan2(deltaX, deltaY)); //theta2 now in degrees
+    theta1 = odometer.getXYT()[2]; // theta1 in degrees
+    turnTo(theta2 - theta1);
+    //Navigation.sleepFor(TIMEOUT_PERIOD);
+    leftMotor.stop();
+    rightMotor.stop();
+    // Move
+    minDistance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+    leftMotor.rotate(convertDistance(minDistance, WHEEL_RAD), true);
+    rightMotor.rotate(convertDistance(minDistance, WHEEL_RAD), false);
     
-    distance = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-    
-    if (distanceX > 0 && distanceY > 0) {
-      turnTo((90 - Math.abs(turnAngle)));
-    }
-    else if (distanceX > 0 && distanceY < 0) {
-      turnTo(Math.abs(turnAngle) + 90);
-    }
-    else if (distanceX < 0 && distanceY < 0){
-     turnTo((90 - Math.abs(turnAngle)) + 180);
-    }
-    else if (distanceX < 0 && distanceY > 0) {
-      turnTo(Math.abs(turnAngle) + 270);
-    }
-    
-    // drive forward distance
-    leftMotor.setSpeed(FORWARD_SPEED);
-    rightMotor.setSpeed(FORWARD_SPEED);
-
-    leftMotor.rotate(convertDistance(TILE_SIZE * distance, WHEEL_RAD), true);
-    rightMotor.rotate(convertDistance(TILE_SIZE * distance, WHEEL_RAD), false); 
-    
-    navigating = false;
+    LCD.drawString("x " + x, 0, 4);
+    LCD.drawString("y " + y, 0, 5);
+    LCD.drawString("minDistance: " + minDistance, 0, 6);
   }
   
   /*
@@ -85,38 +87,21 @@ public class Navigation implements Runnable {
    * This method should turn a MINIMAL angle to its target. 
    */
   public void turnTo(double theta) {
-    currentTheta = odometer.getXYT()[2]; // gets current heading
-    rotationTheta = theta - currentTheta; // calculates the angle the robot must turn
-    
-    /*
-     * Will adjust the angle to determine the shortest angle to turn to the 
-     * absolute heading theta
-     */
-    if (rotationTheta > 180) { 
-      rotationTheta -= 360;
+    // Convert theta to minimum angle
+    if (theta > 180) {
+      theta = 360 - theta;
+    }
+    else if (theta < -180) {
+      theta = 360 + theta;
     }
     
-    if (rotationTheta < 0) { // will turn the robot left depending on the angle
-      leftMotor.setSpeed(ROTATE_SPEED); 
-      rightMotor.setSpeed(ROTATE_SPEED);
-      
-      /*
-       * takes absolute value of desired angle rotation since sign takes account of direction
-       * in the following .rotate 
-       */
-      rotationTheta = Math.abs(rotationTheta);
-      
-      leftMotor.rotate(-convertAngle(rotationTheta, WHEEL_RAD), true);
-      rightMotor.rotate(convertAngle(rotationTheta, WHEEL_RAD), false);
-    }
-    else { // will turn the robot right depending on the angle
-      leftMotor.setSpeed(ROTATE_SPEED);
-      rightMotor.setSpeed(ROTATE_SPEED);
-      
-      leftMotor.rotate(convertAngle(rotationTheta, WHEEL_RAD), true);
-      rightMotor.rotate(-convertAngle(rotationTheta, WHEEL_RAD), false);
-    }
-    convertAngle(rotationTheta, WHEEL_RAD);
+    LCD.drawString("turn Angle: " + theta, 0, 3);
+    
+    leftMotor.setSpeed(ROTATE_SPEED);
+    rightMotor.setSpeed(ROTATE_SPEED);
+    leftMotor.rotate(convertAngle(theta, WHEEL_RAD), true);
+    rightMotor.rotate(-convertAngle(theta, WHEEL_RAD), false);
+
   }
   
   /**
@@ -139,5 +124,19 @@ public class Navigation implements Runnable {
   public static int convertAngle(double angle, double wheelRad) {
     return convertDistance(Math.PI * TRACK * angle / 360.0, wheelRad);
   }
+  
+  /**
+   * Sleeps current thread for the specified duration.
+   * 
+   * @param duration sleep duration in milliseconds
+   */
+  public static void sleepFor(long duration) {
+    try {
+      Thread.sleep(duration);
+    } catch (InterruptedException e) {
+      // There is nothing to be done here
+    }
+  }
+  
   
 }

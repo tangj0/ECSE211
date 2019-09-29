@@ -10,59 +10,65 @@ public class Main {
   private static boolean avoid;
   
   public static void main(String[] args) {
-    waypoints = new int[5][2];
+//    waypoints = new int[5][2];
+//    
+//    
+//    //waypoints from map 1
+//    waypoints[0] = new int[] {1,3};
+//    waypoints[1] = new int[] {2,2};
+//    waypoints[2] = new int[] {3,3};
+//    waypoints[3] = new int[] {3,2};
+//    waypoints[4] = new int[] {2,1};
+
     
-    //waypoints from map 1
-    waypoints[0] = new int[] {1,3};
-    waypoints[1] = new int[] {2,2};
-    waypoints[2] = new int[] {3,3};
-    waypoints[3] = new int[] {3,2};
-    waypoints[4] = new int[] {2,1};
-    
-    selectedController = new PController(); 
-    
-    
-    int option = Button.waitForAnyPress();
-    
-    Display.showText("<  Left   |   Right >",
-                     "    No    |   With  >",
-                     " Obstacle | Obstacle",
+    int buttonChoice;
+    new Thread(odometer).start(); //Odometer thread
+    Display.showText("< Left  |   Right >",
+                     "   No   |   With  >",
+                     "Obstacle| Obstacle ",
                      "                    ");
     
+    do {
+      buttonChoice = Button.waitForAnyPress();
+    } while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT);
+    
+    
     // Button choice determines driving with or without obstacle avoidance = PController
-    if (option == Button.ID_LEFT) {
+    if (buttonChoice == Button.ID_LEFT) {
       avoid = false;
     }
-    else if (option == Button.ID_RIGHT) {
+    else if (buttonChoice == Button.ID_RIGHT) {
       avoid = true;
     }
-    else {
-      TEXT_LCD.clear();
-      System.err.println("Error - Invalid button!");
-      // Sleep for 2 seconds so user can read error message
-      try {
-        Thread.sleep(2000);
-      } catch (InterruptedException e) {
-      }
-      System.exit(-1);
-    }
-    
-    // Start the odometer, poller (for pcontroller), navigation and display threads
-    new Thread(odometer).start();
+    // Display, navigation, poller threads
+    new Thread(new Display()).start();
     new Thread(new Navigation()).start();
+
     if (avoid) {
+      selectedController = new PController(); 
       new Thread(new UltrasonicPoller()).start();
     }
-    new Thread(new Display()).start();
     
-    // Wait here until any button is pressed to terminate
-    Button.waitForAnyPress();
-    System.exit(0);
-
+    while (Button.waitForAnyPress() != Button.ID_ESCAPE) {
+    } // do nothing
+  
+   System.exit(0);
+   
   }
   
   
-  
+  /**
+   * Sleeps current thread for the specified duration.
+   * 
+   * @param duration sleep duration in milliseconds
+   */
+  public static void sleepFor(long duration) {
+    try {
+      Thread.sleep(duration);
+    } catch (InterruptedException e) {
+      // There is nothing to be done here
+    }
+  }
   
   
 }
