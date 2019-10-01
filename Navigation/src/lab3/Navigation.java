@@ -11,11 +11,11 @@ public class Navigation implements Runnable {
   private static double currentTheta;
   private static double rotationTheta;
   
-  private static double x, y; 
+  private static double x, y; // these are the current coordinates of the robot
   private static double deltaX, deltaY;
   
   private static double minDistance;
-  private static double theta1, theta2;
+  private static double theta1, theta2; //theta1 is current heading, theta 2 is desired heading
   
   public static int[][] waypoints;
   
@@ -38,13 +38,11 @@ public class Navigation implements Runnable {
     rightMotor.stop();
     odometer.setXYT(1, 1, 0);
 
-    while(true) {
-      for(int i = 0; i < waypoints.length; i++) {
-        int xCoord = waypoints[i][0];
-        int yCoord = waypoints[i][1];
-        travelTo(xCoord, yCoord);
-        LCD.drawString(Integer.toString(xCoord), 0, 6);
-      }
+    for(int i = 0; i < waypoints.length; i++) {
+      int xCoord = waypoints[i][0];
+      int yCoord = waypoints[i][1];
+      travelTo(xCoord, yCoord);        
+      LCD.drawString(Integer.toString(xCoord), 0, 6);
     }
   }
   
@@ -59,16 +57,16 @@ public class Navigation implements Runnable {
   
   public void travelTo(double xCoord, double yCoord) {
     // Gets current x, y positions and convert from cm to integer
-    x = Math.round(odometer.getXYT()[0]/TILE_SIZE); 
+    x = Math.round(odometer.getXYT()[0]/TILE_SIZE);  
     y = Math.round(odometer.getXYT()[1]/TILE_SIZE); 
     
-    deltaX = TILE_SIZE*(xCoord - x); 
-    deltaY = TILE_SIZE*(yCoord  - y);
+    deltaX = TILE_SIZE*(xCoord - x); //xCoord is the coordinate of the next waypoint
+    deltaY = TILE_SIZE*(yCoord  - y); //yCoord is the coordinate of the next waypoint
     
     // Turn
-    theta2 = Math.toDegrees(Math.atan2(deltaX, deltaY)); //theta2 now in degrees
-    theta1 = odometer.getXYT()[2]; // theta1 in degrees
-    turnTo(theta2 - theta1);
+    theta2 = Math.toDegrees(Math.atan2(deltaX, deltaY)); //theta2 (desired heading) now in degrees
+  
+    turnTo(theta2);
     //Navigation.sleepFor(TIMEOUT_PERIOD);
     leftMotor.stop();
     rightMotor.stop();
@@ -87,20 +85,23 @@ public class Navigation implements Runnable {
    * This method should turn a MINIMAL angle to its target. 
    */
   public void turnTo(double theta) {
+    theta1 = odometer.getXYT()[2]; // theta1 in degrees
     // Convert theta to minimum angle
-    if (theta > 180) {
-      theta = 360 - theta;
-    }
-    else if (theta < -180) {
-      theta = 360 + theta;
+    if (Math.abs(theta - theta1) < 180) {
+      if (theta - theta1 < 0) {
+        theta = theta + 180;
+      }
+      else {
+        theta = theta - 180;
+      }
     }
     
     LCD.drawString("turn Angle: " + theta, 0, 3);
     
     leftMotor.setSpeed(ROTATE_SPEED);
     rightMotor.setSpeed(ROTATE_SPEED);
-    leftMotor.rotate(convertAngle(theta, WHEEL_RAD), true);
-    rightMotor.rotate(-convertAngle(theta, WHEEL_RAD), false);
+    leftMotor.rotate(convertAngle((theta - theta1), WHEEL_RAD), true);
+    rightMotor.rotate(-convertAngle((theta - theta1), WHEEL_RAD), false);
 
   }
   
