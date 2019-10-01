@@ -16,17 +16,23 @@ public class BangBangController extends UltrasonicController {
     
     if (this.distance < BAND_CENTER + bufferDist) {
       Navigation.navigating = false;
+      leftMotor.setSpeed(MOTOR_HIGH);
+      rightMotor.setSpeed(MOTOR_HIGH);
+      leftMotor.forward();
+      rightMotor.backward();
     }
     else if (this.distance < BAND_CENTER) {
       Navigation.navigating = false;
+      leftMotor.setSpeed(MOTOR_HIGH);
+      rightMotor.setSpeed(MOTOR_LOW);
+      leftMotor.forward();
+      rightMotor.backward();
     }
     else if (this.distance > BAND_CENTER + bufferDist){
       Navigation.navigating = true;
     }
     
   }
-  
-  
   
   
   @Override

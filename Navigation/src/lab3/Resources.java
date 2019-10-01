@@ -63,6 +63,10 @@ public class Resources {
    */
   public static final int MOTOR_SPEED = 170; //rpm
   
+  public static final int MOTOR_HIGH = 120;
+  
+  public static final int MOTOR_LOW = 70;
+  
   
   
   

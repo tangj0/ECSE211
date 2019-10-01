@@ -5,7 +5,7 @@ import static lab3.Resources.*;
 //static import to avoid duplicating variables and make the code easier to read
 import static lab3.Resources.*;
 
-public class Navigation implements Runnable {
+public class Navigation {
   
   private static double currentTheta;
   private static double rotationTheta;
@@ -22,34 +22,42 @@ public class Navigation implements Runnable {
   // BangBangController changes this boolean, Navigation just checks its value before moving
   public static boolean navigating; 
   
-  public Navigation() {
-    waypoints = new int[5][2]; 
-    
-    //waypoints from map 1
-    waypoints[0] = new int[] {1,3};
-    waypoints[1] = new int[] {2,2};
-    waypoints[2] = new int[] {3,3};
-    waypoints[3] = new int[] {3,2};
-    waypoints[4] = new int[] {2,1};
-
-  }
+//  public Navigation() {
+//    waypoints = new int[5][2]; 
+//    
+//    //waypoints from map 1
+//    waypoints[0] = new int[] {1,3};
+//    waypoints[1] = new int[] {2,2};
+//    waypoints[2] = new int[] {3,3};
+//    waypoints[3] = new int[] {3,2};
+//    waypoints[4] = new int[] {2,1};
+//
+//  }
   
-  public void run() {
-    // Reset motors, navigating, and set odometer 
-    leftMotor.stop();
-    rightMotor.stop();
-    odometer.setXYT(TILE_SIZE, TILE_SIZE, 0);
-    navigating = true;
-    
-    for(int i = 0; i < waypoints.length; i++) {
-      int xCoord = waypoints[i][0];
-      int yCoord = waypoints[i][1];
-      travelTo(xCoord, yCoord);
-    }
+//  public Navigation() {
+//    // Reset motors, navigating, and set odometer 
+//    leftMotor.stop();
+//    rightMotor.stop();
+//    odometer.setXYT(TILE_SIZE, TILE_SIZE, 0);
+//    navigating = true;
+//  }
+  
+//  public void run() {
+//    // Reset motors, navigating, and set odometer 
+//    leftMotor.stop();
+//    rightMotor.stop();
+//    odometer.setXYT(TILE_SIZE, TILE_SIZE, 0);
+//    navigating = true;
+  
+//    for(int i = 0; i < waypoints.length; i++) {
+//      int xCoord = waypoints[i][0];
+//      int yCoord = waypoints[i][1];
+//      travelTo(xCoord, yCoord);
+//    }
       
-  }
+//  }
   
-  public void travelTo(double xCoord, double yCoord) {
+  public static void travelTo(double xCoord, double yCoord) {
     // Gets current x, y positions (already in cm) 
     x = odometer.getXYT()[0];
     y = odometer.getXYT()[1];
@@ -78,7 +86,7 @@ public class Navigation implements Runnable {
    * This method causes the robot to turn (on point) to the absolute heading theta. 
    * This method should turn a MINIMAL angle to its target. 
    */
-  public void turnTo(double theta) {
+  public static void turnTo(double theta) {
     // Convert theta to minimum angle
     if (theta > 180) {
       theta = 360 - theta;
