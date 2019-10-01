@@ -4,7 +4,6 @@ import static lab3.Resources.*;
 
 //static import to avoid duplicating variables and make the code easier to read
 import static lab3.Resources.*;
-import static lab3.Main.waypoints;
 
 public class Navigation implements Runnable {
   
@@ -20,8 +19,7 @@ public class Navigation implements Runnable {
   public static int[][] waypoints;
   
   public Navigation() {
-    waypoints = new int[5][2];
-    
+    waypoints = new int[5][2]; 
     
     //waypoints from map 1
     waypoints[0] = new int[] {1,3};
@@ -33,19 +31,17 @@ public class Navigation implements Runnable {
   }
   
   public void run() {
-    // Reset motors and odometer
+    // Reset motors and set odometer 
     leftMotor.stop();
     rightMotor.stop();
-    odometer.setXYT(1, 1, 0);
-
-    while(true) {
-      for(int i = 0; i < waypoints.length; i++) {
-        int xCoord = waypoints[i][0];
-        int yCoord = waypoints[i][1];
-        travelTo(xCoord, yCoord);
-        LCD.drawString(Integer.toString(xCoord), 0, 6);
-      }
+    odometer.setXYT(TILE_SIZE, TILE_SIZE, 0);
+     
+    for(int i = 0; i < waypoints.length; i++) {
+      int xCoord = waypoints[i][0];
+      int yCoord = waypoints[i][1];
+      travelTo(xCoord, yCoord);
     }
+      
   }
   
   // True if motors are moving
@@ -58,28 +54,36 @@ public class Navigation implements Runnable {
   }
   
   public void travelTo(double xCoord, double yCoord) {
-    // Gets current x, y positions and convert from cm to integer
-    x = Math.round(odometer.getXYT()[0]/TILE_SIZE); 
-    y = Math.round(odometer.getXYT()[1]/TILE_SIZE); 
     
-    deltaX = TILE_SIZE*(xCoord - x); 
-    deltaY = TILE_SIZE*(yCoord  - y);
+    // Gets current x, y positions (already in cm) 
+    x = odometer.getXYT()[0];
+    y = odometer.getXYT()[1];
+    
+    deltaX = TILE_SIZE*xCoord - x; 
+    deltaY = TILE_SIZE*yCoord - y;
     
     // Turn
     theta2 = Math.toDegrees(Math.atan2(deltaX, deltaY)); //theta2 now in degrees
     theta1 = odometer.getXYT()[2]; // theta1 in degrees
+    
+//    LCD.drawString("x " + x, 0, 0);
+//    LCD.drawString("y " + y, 0, 1);   
+//    LCD.drawString("deltaX " + deltaX, 0, 4);
+//    LCD.drawString("deltaY " + deltaY, 0, 5);
+    
+    
     turnTo(theta2 - theta1);
-    //Navigation.sleepFor(TIMEOUT_PERIOD);
+    
     leftMotor.stop();
     rightMotor.stop();
+    
     // Move
     minDistance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
     leftMotor.rotate(convertDistance(minDistance, WHEEL_RAD), true);
     rightMotor.rotate(convertDistance(minDistance, WHEEL_RAD), false);
     
-    LCD.drawString("x " + x, 0, 4);
-    LCD.drawString("y " + y, 0, 5);
-    LCD.drawString("minDistance: " + minDistance, 0, 6);
+//    LCD.drawString("minDistance: " + minDistance, 0, 6);
+//    LCD.drawString("Waypoint: " + xCoord + " " + yCoord, 0, 6);
   }
   
   /*
