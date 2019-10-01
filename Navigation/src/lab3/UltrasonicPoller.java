@@ -17,6 +17,8 @@ public class UltrasonicPoller implements Runnable {
   private float[] usData;
 
   public UltrasonicPoller() {
+    leftMotor.stop();
+    rightMotor.stop();
     usData = new float[US_SENSOR.sampleSize()];
     controller = Main.selectedController;
   }

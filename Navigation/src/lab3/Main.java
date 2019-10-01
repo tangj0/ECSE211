@@ -31,11 +31,17 @@ public class Main {
     }
     new Thread(new Display()).start(); //Display thread
 
-    // Navigation, poller threads
+    // Navigation thread, naming it to be used later
+//    Thread navigationThread = new Thread(new Navigation());
+//    navigationThread.start();
     new Thread(new Navigation()).start();
-
+    
+    // Poller thread, naming it to be used later, 
     if (avoid) {
-      selectedController = new PController(); 
+      selectedController = new BangBangController(); 
+      
+//      Thread controllerThread = new Thread(new UltrasonicPoller());
+      
       new Thread(new UltrasonicPoller()).start();
     }
     

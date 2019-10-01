@@ -18,6 +18,10 @@ public class Navigation implements Runnable {
   
   public static int[][] waypoints;
   
+  // True if bang bang controller isn't using the motors, else false
+  // BangBangController changes this boolean, Navigation just checks its value before moving
+  public static boolean navigating; 
+  
   public Navigation() {
     waypoints = new int[5][2]; 
     
@@ -31,11 +35,12 @@ public class Navigation implements Runnable {
   }
   
   public void run() {
-    // Reset motors and set odometer 
+    // Reset motors, navigating, and set odometer 
     leftMotor.stop();
     rightMotor.stop();
     odometer.setXYT(TILE_SIZE, TILE_SIZE, 0);
-     
+    navigating = true;
+    
     for(int i = 0; i < waypoints.length; i++) {
       int xCoord = waypoints[i][0];
       int yCoord = waypoints[i][1];
@@ -44,17 +49,7 @@ public class Navigation implements Runnable {
       
   }
   
-  // True if motors are moving
-  public boolean isNavigating() {
-    boolean navigating = false;
-    if (leftMotor.isMoving() || rightMotor.isMoving()) {
-      navigating = true;
-    }
-    return navigating;
-  }
-  
   public void travelTo(double xCoord, double yCoord) {
-    
     // Gets current x, y positions (already in cm) 
     x = odometer.getXYT()[0];
     y = odometer.getXYT()[1];
@@ -66,24 +61,17 @@ public class Navigation implements Runnable {
     theta2 = Math.toDegrees(Math.atan2(deltaX, deltaY)); //theta2 now in degrees
     theta1 = odometer.getXYT()[2]; // theta1 in degrees
     
-//    LCD.drawString("x " + x, 0, 0);
-//    LCD.drawString("y " + y, 0, 1);   
-//    LCD.drawString("deltaX " + deltaX, 0, 4);
-//    LCD.drawString("deltaY " + deltaY, 0, 5);
-    
-    
     turnTo(theta2 - theta1);
     
-    leftMotor.stop();
     rightMotor.stop();
+    leftMotor.stop();
     
     // Move
-    minDistance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-    leftMotor.rotate(convertDistance(minDistance, WHEEL_RAD), true);
-    rightMotor.rotate(convertDistance(minDistance, WHEEL_RAD), false);
-    
-//    LCD.drawString("minDistance: " + minDistance, 0, 6);
-//    LCD.drawString("Waypoint: " + xCoord + " " + yCoord, 0, 6);
+    if (navigating) {
+      minDistance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+      leftMotor.rotate(convertDistance(minDistance, WHEEL_RAD), true);
+      rightMotor.rotate(convertDistance(minDistance, WHEEL_RAD), false);
+    }
   }
   
   /*
@@ -101,11 +89,12 @@ public class Navigation implements Runnable {
     
     LCD.drawString("turn Angle: " + theta, 0, 3);
     
-    leftMotor.setSpeed(ROTATE_SPEED);
-    rightMotor.setSpeed(ROTATE_SPEED);
-    leftMotor.rotate(convertAngle(theta, WHEEL_RAD), true);
-    rightMotor.rotate(-convertAngle(theta, WHEEL_RAD), false);
-
+    if (navigating) {
+      leftMotor.setSpeed(ROTATE_SPEED);
+      rightMotor.setSpeed(ROTATE_SPEED);
+      leftMotor.rotate(convertAngle(theta, WHEEL_RAD), true);
+      rightMotor.rotate(-convertAngle(theta, WHEEL_RAD), false);
+    }
   }
   
   /**

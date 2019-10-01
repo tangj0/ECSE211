@@ -46,7 +46,7 @@ public class Resources {
   
   
   
-  //For PController
+  //For Bang Bang Controller
   /**
    * Number of continuous samples the ultrasonic sensor will ignore (filter out) 
    * before measuring the true distance 
@@ -57,16 +57,11 @@ public class Resources {
    * Offset from the wall (cm).
    */  
   public static final int BAND_CENTER = 20;
-  
-  /**
-   * Width of dead band (cm)
-   */
-  public static final int BAND_WIDTH = 3; //robot can be +- bandwidth away from bandcenter
-  
+ 
   /**
    * Motor speed
    */
-  public static final int MOTOR_SPEED = 300; //rpm
+  public static final int MOTOR_SPEED = 170; //rpm
   
   
   
