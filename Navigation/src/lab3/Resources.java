@@ -4,6 +4,7 @@ import lab3.Odometer;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
@@ -31,7 +32,7 @@ public class Resources {
   /**
    * The speed at which the robot rotates in degrees per second.
    */
-  public static final int ROTATE_SPEED = 140;//140
+  public static final int ROTATE_SPEED = 140; //140
   
   /**
    * Timeout period in milliseconds.
@@ -44,6 +45,11 @@ public class Resources {
   public static final double TILE_SIZE = 30.48; //30.48
   
   
+  //For navigation
+  /**
+   * Sensor rotation  motor speed 
+   */
+  public static final int MOTOR_SENSOR_SPEED = 70;
   
   
   //For Bang Bang Controller
@@ -56,7 +62,7 @@ public class Resources {
   /**
    * Offset from the wall (cm).
    */  
-  public static final int BAND_CENTER = 20;
+  public static final int BAND_CENTER = 16;
  
   /**
    * Motor speed
@@ -95,6 +101,12 @@ public class Resources {
    */
   public static final EV3LargeRegulatedMotor rightMotor =
       new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
+  
+  /**
+   * Sensor rotation motor
+   */
+  public static final EV3MediumRegulatedMotor sensorMotor =
+      new EV3MediumRegulatedMotor(LocalEV3.get().getPort("C"));
   
   /**
    * The LCD.

@@ -5,11 +5,7 @@ import static lab3.Resources.*;
 //static import to avoid duplicating variables and make the code easier to read
 import static lab3.Resources.*;
 
-public class Navigation {
-  
-  private static double currentTheta;
-  private static double rotationTheta;
-  
+public class Navigation extends UltrasonicController implements Runnable{
   private static double x, y; 
   private static double deltaX, deltaY;
   
@@ -17,47 +13,44 @@ public class Navigation {
   private static double theta1, theta2;
   
   public static int[][] waypoints;
+  private static int rightDist, leftDist;
   
   // True if bang bang controller isn't using the motors, else false
   // BangBangController changes this boolean, Navigation just checks its value before moving
-  public static boolean navigating; 
+  public boolean navigating; 
   
-//  public Navigation() {
-//    waypoints = new int[5][2]; 
-//    
-//    //waypoints from map 1
-//    waypoints[0] = new int[] {1,3};
-//    waypoints[1] = new int[] {2,2};
-//    waypoints[2] = new int[] {3,3};
-//    waypoints[3] = new int[] {3,2};
-//    waypoints[4] = new int[] {2,1};
-//
-//  }
+  public Navigation() {
+    waypoints = new int[5][2]; 
+    leftDist = 10;
+    rightDist = 10;
+    
+    //waypoints from map 1
+    waypoints[0] = new int[] {1,3};
+    waypoints[1] = new int[] {2,2};
+    waypoints[2] = new int[] {3,3};
+    waypoints[3] = new int[] {3,2};
+    waypoints[4] = new int[] {2,1};
+    
+    // Reset motors, navigating, and set odometer 
+    navigating = true;
+    leftMotor.stop();
+    rightMotor.stop();
+    odometer.setXYT(TILE_SIZE, TILE_SIZE, 0);
+
+  }
   
-//  public Navigation() {
-//    // Reset motors, navigating, and set odometer 
-//    leftMotor.stop();
-//    rightMotor.stop();
-//    odometer.setXYT(TILE_SIZE, TILE_SIZE, 0);
-//    navigating = true;
-//  }
-  
-//  public void run() {
-//    // Reset motors, navigating, and set odometer 
-//    leftMotor.stop();
-//    rightMotor.stop();
-//    odometer.setXYT(TILE_SIZE, TILE_SIZE, 0);
-//    navigating = true;
-  
-//    for(int i = 0; i < waypoints.length; i++) {
-//      int xCoord = waypoints[i][0];
-//      int yCoord = waypoints[i][1];
-//      travelTo(xCoord, yCoord);
-//    }
+  public void run () {
+    waveSensor(30);
+    for(int i = 0; i < waypoints.length; i++) {
+      int xCoord = waypoints[i][0];
+      int yCoord = waypoints[i][1];
+      travelTo(xCoord, yCoord);
+      LCD.drawString("xCoord yCoord: " + xCoord + " ," + yCoord, 0, 5);
+    }
       
-//  }
+  }
   
-  public static void travelTo(double xCoord, double yCoord) {
+  public void travelTo(double xCoord, double yCoord) {
     // Gets current x, y positions (already in cm) 
     x = odometer.getXYT()[0];
     y = odometer.getXYT()[1];
@@ -86,7 +79,7 @@ public class Navigation {
    * This method causes the robot to turn (on point) to the absolute heading theta. 
    * This method should turn a MINIMAL angle to its target. 
    */
-  public static void turnTo(double theta) {
+  public void turnTo(double theta) {
     // Convert theta to minimum angle
     if (theta > 180) {
       theta = 360 - theta;
@@ -103,6 +96,47 @@ public class Navigation {
       leftMotor.rotate(convertAngle(theta, WHEEL_RAD), true);
       rightMotor.rotate(-convertAngle(theta, WHEEL_RAD), false);
     }
+  }
+  
+  public static void waveSensor(int theta) {
+     sensorMotor.rotate((int)Math.PI*theta/180);
+     sensorMotor.rotate((int)Math.PI*(-2*theta)/180);
+  }
+  
+  @Override
+  public void processUSData(int distance) {
+    this.distance = distance;
+    filter(distance);  //from UltrasonicController, filters bad values from input
+    waveSensor(30); // Move sensor back and forth for better accuracy
+    
+    LCD.drawString("distance: " +  this.distance, 0, 4);
+    
+    for(int i = 0; i < waypoints.length; i++) { 
+      int xCoord = waypoints[i][0];
+      int yCoord = waypoints[i][1];
+      travelTo(xCoord, yCoord);
+      
+      if (this.distance < BAND_CENTER ) {
+        navigating = false;
+        leftMotor.setSpeed(MOTOR_HIGH);
+        rightMotor.setSpeed(MOTOR_HIGH);      
+        leftMotor.rotate(20);
+        rightMotor.rotate(-40);
+        navigating = true;
+      }
+      else {  //(this.distance > BAND_CENTER)
+        navigating = true;
+      } 
+      
+      //LCD.drawString("xCoord yCoord: " + xCoord + " ," + yCoord, 0, 5);
+    }
+
+    
+  }
+  
+  @Override
+  public int readUSDistance() {
+    return this.distance;
   }
   
   /**

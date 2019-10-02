@@ -7,15 +7,9 @@ public class Main {
   public static UltrasonicController selectedController;
   private static boolean avoid;
   public static int[][] waypoints;
+  public static Navigation myNav;
 
   public static void main(String[] args) {
-    waypoints = new int[5][2]; 
-    
-    waypoints[0] = new int[] {1,3};
-    waypoints[1] = new int[] {2,2};
-    waypoints[2] = new int[] {3,3};
-    waypoints[3] = new int[] {3,2};
-    waypoints[4] = new int[] {2,1};
 
     int buttonChoice;
     new Thread(odometer).start(); //Odometer thread
@@ -38,30 +32,21 @@ public class Main {
     }
     new Thread(new Display()).start(); //Display thread
 
-    
-    // Poller thread, naming it to be used later, 
     if (avoid) {
-      selectedController = new BangBangController();  
+      //poller thread
+      //selectedController = new Navigation();
       new Thread(new UltrasonicPoller()).start();
+    } 
+    else {
+      //navigation thread
+      new Thread(new Navigation()).start();
     }
-    
-    // reset motos and set odometer
-    leftMotor.stop();
-    rightMotor.stop();
-    odometer.setXYT(TILE_SIZE, TILE_SIZE, 0);
-    Navigation.navigating = true;
-    
-    for(int i = 0; i < waypoints.length; i++) {
-      int xCoord = waypoints[i][0];
-      int yCoord = waypoints[i][1];
-      Navigation.travelTo(xCoord, yCoord); //directly using the static method    
-    }
-    
-    while (Button.waitForAnyPress() != Button.ID_ESCAPE) {
-    }// do nothing
-     
-    System.exit(0);
    
+    while (Button.waitForAnyPress() != Button.ID_ESCAPE) {
+    } //do nothing
+    
+    System.exit(0);
+
   }
   
   
