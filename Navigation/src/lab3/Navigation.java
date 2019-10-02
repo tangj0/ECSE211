@@ -28,11 +28,11 @@ public class Navigation implements Runnable{
     rightDist = 10;
     
     //waypoints
-    waypoints[0] = new int[] {1,2};
-    waypoints[1] = new int[] {2,3};
-    waypoints[2] = new int[] {2,1};
+    waypoints[0] = new int[] {2,2};
+    waypoints[1] = new int[] {1,3};
+    waypoints[2] = new int[] {3,3};
     waypoints[3] = new int[] {3,2};
-    waypoints[4] = new int[] {3,3};
+    waypoints[4] = new int[] {2,1};
     
     // Reset motors, navigating, and set odometer 
     navigating = true;
