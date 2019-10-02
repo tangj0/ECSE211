@@ -5,7 +5,7 @@ import static lab3.Resources.*;
 
 public class Main {
   public static UltrasonicController selectedController;
-  private static boolean avoid;
+  private static boolean avoid = false;
   public static int[][] waypoints;
   public static Navigation myNav;
   
@@ -18,9 +18,9 @@ public class Main {
     int buttonChoice;
     new Thread(odometer).start(); //Odometer thread
     
-    Display.showText("< Left  |   Right >",
-                     "   No   |   With  >",
-                     "Obstacle| Obstacle ",
+    Display.showText("< Left  |  Right >",
+                     "   No   |  With   ",
+                     "Obstacle|Obstacle ",
                      "                    ");
     
     do {

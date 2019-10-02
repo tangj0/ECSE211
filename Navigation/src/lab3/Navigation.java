@@ -28,30 +28,34 @@ public class Navigation implements Runnable{
     rightDist = 10;
     
     //waypoints
-    waypoints[0] = new int[] {1,3};
-    waypoints[1] = new int[] {2,2};
-    waypoints[2] = new int[] {3,3};
+    waypoints[0] = new int[] {1,2};
+    waypoints[1] = new int[] {2,3};
+    waypoints[2] = new int[] {2,1};
     waypoints[3] = new int[] {3,2};
-    waypoints[4] = new int[] {2,1};
+    waypoints[4] = new int[] {3,3};
     
     // Reset motors, navigating, and set odometer 
     navigating = true;
     leftMotor.stop();
     rightMotor.stop();
     odometer.setXYT(TILE_SIZE, TILE_SIZE, 0);
-
   }
   
+  public boolean isNavigating() {
+    return navigating;
+  }
   /**
    * Runs the logic of navigation
    */
   public void run () {
+    navigating = true;
     for(int i = 0; i < waypoints.length; i++) {
       int xCoord = waypoints[i][0];
       int yCoord = waypoints[i][1];
       travelTo(xCoord, yCoord);
       LCD.drawString("Px Py: " + xCoord + " ," + yCoord, 0, 5);
     }     
+    navigating = false;
   }
   
   /**
@@ -73,15 +77,13 @@ public class Navigation implements Runnable{
     
     turnTo(theta2 - theta1);
     
-    rightMotor.stop();
-    leftMotor.stop();
-    
+    rightMotor.setSpeed(FORWARD_SPEED);
+    leftMotor.setSpeed(FORWARD_SPEED);
     // Move
-    if (navigating) {
-      minDistance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-      leftMotor.rotate(convertDistance(minDistance, WHEEL_RAD), true);
-      rightMotor.rotate(convertDistance(minDistance, WHEEL_RAD), false);
-    }
+    minDistance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+    leftMotor.rotate(convertDistance(minDistance, WHEEL_RAD), true);
+    rightMotor.rotate(convertDistance(minDistance, WHEEL_RAD), false);
+
   }
   
   /**
@@ -99,12 +101,11 @@ public class Navigation implements Runnable{
     
     LCD.drawString("turn Angle: " + theta, 0, 3);
     
-    if (navigating) {
-      leftMotor.setSpeed(ROTATE_SPEED);
-      rightMotor.setSpeed(ROTATE_SPEED);
-      leftMotor.rotate(convertAngle(theta, WHEEL_RAD), true);
-      rightMotor.rotate(-convertAngle(theta, WHEEL_RAD), false);
-    }
+    leftMotor.setSpeed(ROTATE_SPEED);
+    rightMotor.setSpeed(ROTATE_SPEED);
+    leftMotor.rotate(convertAngle(theta, WHEEL_RAD), true);
+    rightMotor.rotate(-convertAngle(theta, WHEEL_RAD), false);
+
   }
   
   /**
