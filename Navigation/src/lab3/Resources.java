@@ -32,7 +32,7 @@ public class Resources {
   /**
    * The speed at which the robot rotates in degrees per second.
    */
-  public static final int ROTATE_SPEED = 140; //140
+  public static final int ROTATE_SPEED = 100; //140
   
   /**
    * Timeout period in milliseconds.
@@ -49,7 +49,7 @@ public class Resources {
   /**
    * Sensor rotation  motor speed 
    */
-  public static final int MOTOR_SENSOR_SPEED = 70;
+  public static final int MOTOR_SENSOR_SPEED = 20;
   
   
   //For Bang Bang Controller
@@ -88,7 +88,7 @@ public class Resources {
    * The ultrasonic sensor.
    */
   public static final EV3UltrasonicSensor US_SENSOR = 
-      new EV3UltrasonicSensor(LocalEV3.get().getPort("S1"));
+      new EV3UltrasonicSensor(LocalEV3.get().getPort("S3"));
 
   /**
    * The left motor.

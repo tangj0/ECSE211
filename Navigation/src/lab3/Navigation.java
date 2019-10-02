@@ -5,7 +5,7 @@ import static lab3.Resources.*;
 //static import to avoid duplicating variables and make the code easier to read
 import static lab3.Resources.*;
 
-public class Navigation extends UltrasonicController implements Runnable{
+public class Navigation implements Runnable{
   private static double x, y; 
   private static double deltaX, deltaY;
   
@@ -17,14 +17,17 @@ public class Navigation extends UltrasonicController implements Runnable{
   
   // True if bang bang controller isn't using the motors, else false
   // BangBangController changes this boolean, Navigation just checks its value before moving
-  public boolean navigating; 
+  public static boolean navigating; 
   
+  /**
+   * Class constructor
+   */
   public Navigation() {
     waypoints = new int[5][2]; 
     leftDist = 10;
     rightDist = 10;
     
-    //waypoints from map 1
+    //waypoints
     waypoints[0] = new int[] {1,3};
     waypoints[1] = new int[] {2,2};
     waypoints[2] = new int[] {3,3};
@@ -39,17 +42,23 @@ public class Navigation extends UltrasonicController implements Runnable{
 
   }
   
+  /**
+   * Runs the logic of navigation
+   */
   public void run () {
-    waveSensor(30);
     for(int i = 0; i < waypoints.length; i++) {
       int xCoord = waypoints[i][0];
       int yCoord = waypoints[i][1];
       travelTo(xCoord, yCoord);
-      LCD.drawString("xCoord yCoord: " + xCoord + " ," + yCoord, 0, 5);
-    }
-      
+      LCD.drawString("Px Py: " + xCoord + " ," + yCoord, 0, 5);
+    }     
   }
   
+  /**
+   * Moves the robot to each desired waypoint
+   * @param xCoord  x coordinate of waypoint[i]
+   * @param yCoord  y coordinate of waypoint[i]
+   */
   public void travelTo(double xCoord, double yCoord) {
     // Gets current x, y positions (already in cm) 
     x = odometer.getXYT()[0];
@@ -75,12 +84,12 @@ public class Navigation extends UltrasonicController implements Runnable{
     }
   }
   
-  /*
-   * This method causes the robot to turn (on point) to the absolute heading theta. 
+  /**
+   * Causes the robot to turn (on point) to the absolute heading theta. 
    * This method should turn a MINIMAL angle to its target. 
+   * @param theta  robot turning angle before each waypoint
    */
   public void turnTo(double theta) {
-    // Convert theta to minimum angle
     if (theta > 180) {
       theta = 360 - theta;
     }
@@ -96,47 +105,6 @@ public class Navigation extends UltrasonicController implements Runnable{
       leftMotor.rotate(convertAngle(theta, WHEEL_RAD), true);
       rightMotor.rotate(-convertAngle(theta, WHEEL_RAD), false);
     }
-  }
-  
-  public static void waveSensor(int theta) {
-     sensorMotor.rotate((int)Math.PI*theta/180);
-     sensorMotor.rotate((int)Math.PI*(-2*theta)/180);
-  }
-  
-  @Override
-  public void processUSData(int distance) {
-    this.distance = distance;
-    filter(distance);  //from UltrasonicController, filters bad values from input
-    waveSensor(30); // Move sensor back and forth for better accuracy
-    
-    LCD.drawString("distance: " +  this.distance, 0, 4);
-    
-    for(int i = 0; i < waypoints.length; i++) { 
-      int xCoord = waypoints[i][0];
-      int yCoord = waypoints[i][1];
-      travelTo(xCoord, yCoord);
-      
-      if (this.distance < BAND_CENTER ) {
-        navigating = false;
-        leftMotor.setSpeed(MOTOR_HIGH);
-        rightMotor.setSpeed(MOTOR_HIGH);      
-        leftMotor.rotate(20);
-        rightMotor.rotate(-40);
-        navigating = true;
-      }
-      else {  //(this.distance > BAND_CENTER)
-        navigating = true;
-      } 
-      
-      //LCD.drawString("xCoord yCoord: " + xCoord + " ," + yCoord, 0, 5);
-    }
-
-    
-  }
-  
-  @Override
-  public int readUSDistance() {
-    return this.distance;
   }
   
   /**
@@ -158,19 +126,6 @@ public class Navigation extends UltrasonicController implements Runnable{
    */
   public static int convertAngle(double angle, double wheelRad) {
     return convertDistance(Math.PI * TRACK * angle / 360.0, wheelRad);
-  }
-  
-  /**
-   * Sleeps current thread for the specified duration.
-   * 
-   * @param duration sleep duration in milliseconds
-   */
-  public static void sleepFor(long duration) {
-    try {
-      Thread.sleep(duration);
-    } catch (InterruptedException e) {
-      // There is nothing to be done here
-    }
   }
   
   

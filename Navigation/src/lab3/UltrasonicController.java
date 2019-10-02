@@ -13,14 +13,12 @@ public abstract class UltrasonicController {
       
   /**
    * Perform an action based on the US data input.
-   * 
    * @param distance the distance to the wall in cm
    */
   public abstract void processUSData(int distance);
 
   /**
    * Returns the distance between the US sensor and an obstacle in cm.
-   * 
    * @return the distance between the US sensor and an obstacle in cm
    */
   public abstract int readUSDistance();

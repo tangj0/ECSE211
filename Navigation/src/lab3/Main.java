@@ -8,11 +8,16 @@ public class Main {
   private static boolean avoid;
   public static int[][] waypoints;
   public static Navigation myNav;
-
+  
+  /**
+   * Main entry point - instantiate objects used and set up sensor
+   * @param args
+   */
   public static void main(String[] args) {
 
     int buttonChoice;
     new Thread(odometer).start(); //Odometer thread
+    
     Display.showText("< Left  |   Right >",
                      "   No   |   With  >",
                      "Obstacle| Obstacle ",
@@ -34,13 +39,13 @@ public class Main {
 
     if (avoid) {
       //poller thread
-      //selectedController = new Navigation();
+      selectedController = new BangBangController();
       new Thread(new UltrasonicPoller()).start();
     } 
-    else {
-      //navigation thread
-      new Thread(new Navigation()).start();
-    }
+    
+    //navigation thread
+    new Thread(new Navigation()).start();
+
    
     while (Button.waitForAnyPress() != Button.ID_ESCAPE) {
     } //do nothing

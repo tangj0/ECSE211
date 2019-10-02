@@ -40,17 +40,13 @@ public class Odometer implements Runnable {
    */
   private double[] position;
   
-  /*
+  /**
    * Class Variables
    */
   public static int lastTachoL; // Tacho L at last sample
   public static int lastTachoR; // Tacho R at last sample
   
-  /*
-   * Class constants
-   */
 
-  // Thread control tools
   /**
    * Fair lock for concurrent writing
    */
@@ -68,7 +64,9 @@ public class Odometer implements Runnable {
 
   private static Odometer odo; // Returned as singleton
 
-  // Motor-related variables
+  /**
+   *  Motor-related variables
+   */
   private static int leftMotorTachoCount = 0;
   private static int rightMotorTachoCount = 0;
 
@@ -87,14 +85,12 @@ public class Odometer implements Runnable {
 
   /**
    * Returns the Odometer Object. Use this method to obtain an instance of Odometer.
-   * 
    * @return the Odometer Object
    */
   public synchronized static Odometer getOdometer() {
     if (odo == null) {
       odo = new Odometer();
     }
-    
     return odo;
   }
 
@@ -141,7 +137,6 @@ public class Odometer implements Runnable {
     }
   }
   
-  // IT IS NOT NECESSARY TO MODIFY ANYTHING BELOW THIS LINE
   
   /**
    * Returns the Odometer data.
