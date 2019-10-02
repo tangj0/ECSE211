@@ -14,6 +14,10 @@ public class Display implements Runnable {
   private final long DISPLAY_PERIOD = 25;
   private long timeout = Long.MAX_VALUE;
 
+  /**
+   * Runs the logic of the display class
+   * Used for displaying the odometer coordinates
+   */
   public void run() {
     
     LCD.clear();

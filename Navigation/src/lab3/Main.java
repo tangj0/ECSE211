@@ -4,14 +4,20 @@ import lejos.hardware.Button;
 import static lab3.Resources.*;
 
 public class Main {
-  
   public static UltrasonicController selectedController;
   private static boolean avoid;
+  public static int[][] waypoints;
+  public static Navigation myNav;
   
+  /**
+   * Main entry point - instantiate objects used and set up sensor
+   * @param args
+   */
   public static void main(String[] args) {
 
     int buttonChoice;
     new Thread(odometer).start(); //Odometer thread
+    
     Display.showText("< Left  |   Right >",
                      "   No   |   With  >",
                      "Obstacle| Obstacle ",
@@ -31,19 +37,21 @@ public class Main {
     }
     new Thread(new Display()).start(); //Display thread
 
-    // Navigation, poller threads
+    if (avoid) {
+      //poller thread
+      selectedController = new BangBangController();
+      new Thread(new UltrasonicPoller()).start();
+    } 
+    
+    //navigation thread
     new Thread(new Navigation()).start();
 
-    if (avoid) {
-      selectedController = new PController(); 
-      new Thread(new UltrasonicPoller()).start();
-    }
-    
-    while (Button.waitForAnyPress() != Button.ID_ESCAPE) {
-    } // do nothing
-  
-   System.exit(0);
    
+    while (Button.waitForAnyPress() != Button.ID_ESCAPE) {
+    } //do nothing
+    
+    System.exit(0);
+
   }
   
   

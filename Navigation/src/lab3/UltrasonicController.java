@@ -13,14 +13,12 @@ public abstract class UltrasonicController {
       
   /**
    * Perform an action based on the US data input.
-   * 
    * @param distance the distance to the wall in cm
    */
   public abstract void processUSData(int distance);
 
   /**
    * Returns the distance between the US sensor and an obstacle in cm.
-   * 
    * @return the distance between the US sensor and an obstacle in cm
    */
   public abstract int readUSDistance();
@@ -36,11 +34,11 @@ public abstract class UltrasonicController {
       filterControl++;
     } else if (distance >= 255) {
       // Repeated large values, so there is nothing there: leave the distance alone
-      this.distance = (int)(distance * Math.sqrt(2)/2); //taking cos of 45 times distance because sensor was on 45 degree angle
+      this.distance = distance; 
     } else {
       // distance went below 255: reset filter and leave distance alone.
       filterControl = 0;
-      this.distance = (int)(distance * Math.sqrt(2)/2); //taking cos of 45 times distance because sensor was on 45 degree angle
+      this.distance = distance; 
     }
   }
   

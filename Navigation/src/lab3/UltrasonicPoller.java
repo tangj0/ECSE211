@@ -16,16 +16,18 @@ public class UltrasonicPoller implements Runnable {
   private UltrasonicController controller;
   private float[] usData;
 
+  /**
+   * Class constructor
+   */
   public UltrasonicPoller() {
+    leftMotor.stop();
+    rightMotor.stop();
     usData = new float[US_SENSOR.sampleSize()];
     controller = Main.selectedController;
   }
 
-  /*
-   * Sensors now return floats using a uniform protocol. Need to convert US result to an integer
-   * [0,255] (non-Javadoc)
-   * 
-   * @see java.lang.Thread#run()
+  /**
+   * Runs the logic of the UltrasonicPoller class
    */
   public void run() {
     int distance;
