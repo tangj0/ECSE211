@@ -68,7 +68,7 @@ public class Resources {
   /**
    * threshold to detect a rising edge
    */
-  public static final int RISE_THRESHOLD = 40; //40
+  public static final int RISE_THRESHOLD = 38; //40
   
   /**
    * angle to detect a rising edge
@@ -88,7 +88,7 @@ public class Resources {
   /**
    * us localization speed
    */
-  public static final int US_SPEED = 90;
+  public static final int US_SPEED = 80;
   
   
   
@@ -96,17 +96,17 @@ public class Resources {
   /**
    * required change in intensity for light sensor line detection
    */
-  public static final double INTENSITY_THRESHOLD = 0.75; ///////////////measure
+  public static final double INTENSITY_THRESHOLD = 0.63; //0.75
   
   /**
    * distance from robot's center of rotation to the light sensor
    */
-  public static final double LS_DISTANCE = 15.0; ////////////measure
+  public static final double LS_DISTANCE = 6.6; //6.6 7.5
   
   /**
    * Motor rotation speed for light sensor localization
    */
-  public static final int LS_SPEED = 100;
+  public static final int LS_SPEED = 75;
   
   
   /**

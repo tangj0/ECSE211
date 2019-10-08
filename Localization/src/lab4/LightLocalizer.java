@@ -10,7 +10,7 @@ import lejos.robotics.SampleProvider;
 public class LightLocalizer extends Thread {
   private double intensity, initialReading;
   
-  private double leftX, rightX, upY, downY;
+  private double theta1, theta2, theta3, theta4; //angles recorded at the 1-4 lines
   
   private SampleProvider lsSampleProvider;
   private float[] lsData;
@@ -31,47 +31,38 @@ public class LightLocalizer extends Thread {
 
   public void run() {
     initialReading = meanFilter();
-    int startTacho = recordTacho();
     
-    while (true) {
-      intensity = meanFilter();
-      // line detected
-      if (intensity/initialReading < INTENSITY_THRESHOLD) {
-         Sound.beep();
-         break;
-      }
-      moveForward(); // move forward until line detected
-    } 
-    stopMotors();
+    // initial position adjustment to move closer to origin
+    turnRight(90);
+    moveBackward(2.5);
+    forwardTillLine();
+    moveForward(LS_DISTANCE/2);
     
-    // initial placement adjustments
-    int endTacho = recordTacho();
-    int distanceToLine = Navigation.convertAngle(endTacho - startTacho, WHEEL_RAD);
-    moveBackward(distanceToLine);
-    turnRight(45); //turn to face origin
-    moveForward(distanceToLine - LS_DISTANCE);
-    turnLeft(45); //turn straight
+    turnLeft(90);
+    moveBackward(2.5);
+    forwardTillLine();
+    moveForward(LS_DISTANCE/2);
     odometer.setTheta(0);
-    
     findPoints();
     
-    // calculate current y position and update odometer
-    double xTheta = Math.abs(leftX - rightX) / 2.0;
-    double dy = Math.cos(xTheta * Math.PI/180) * LS_DISTANCE;
-    odometer.setY(-dy);
+    //calculate x and y offsets from origin
+    double thetaY = theta3 - theta1;
+    double thetaX = theta1 + theta2 + (360-theta4);
     
-    // calculate current x position and update odometer
-    double yTheta = Math.abs(downY - upY) / 2.0;   
-    // to prevent using an angle > 180 due to odometer inaccuracy 
-    // angle theoretically should be < 180
-    if (yTheta > 90) {
-      yTheta = 180 - yTheta;
-    }
-    double dx = Math.cos(yTheta * Math.PI/180) * LS_DISTANCE;
+    double dy = LS_DISTANCE*Math.cos(thetaX/2*Math.PI/180);
+    double dx = LS_DISTANCE*Math.cos(thetaY/2*Math.PI/180);
+    
+    odometer.setY(-dy);
     odometer.setX(-dx);
     
-    Navigation.travelTo(1,1);  
-    Navigation.turnTo(0);
+    LCD.drawString("delta x: " + dx, 0, 3);
+    LCD.drawString("delta y: " + dy, 0, 4);
+    
+    // Move robot's center of rotation of (0,0) and turn to 0 degrees
+    turnRight(90);
+    moveForward(dx);
+    turnLeft(90);
+    moveForward(dy);
   }
   
   private void findPoints() {
@@ -79,11 +70,11 @@ public class LightLocalizer extends Thread {
     leftMotor.rotate(Navigation.convertAngle(360, WHEEL_RAD), true);
     rightMotor.rotate(-Navigation.convertAngle(360, WHEEL_RAD), true);
     
-    // robot turns counter clockwise, record 4 distances
-    leftX = recordAngle();
-    upY = recordAngle();
-    rightX = recordAngle();
-    downY = recordAngle();
+    //robot turns clockwise, records 4 angles  
+    theta1 = recordAngle();
+    theta2 = recordAngle();
+    theta3 = recordAngle();
+    theta4 = recordAngle();
     
     // Wait for robot to finish turning
     while (leftMotor.isMoving() || rightMotor.isMoving()) {
@@ -93,6 +84,7 @@ public class LightLocalizer extends Thread {
       } catch (Exception e) {
         // nothing
       }
+
     }
   }
   
@@ -116,6 +108,18 @@ public class LightLocalizer extends Thread {
     return -1;
   }
   
+  private void forwardTillLine() {
+    while (true) {
+      intensity = meanFilter();
+      // line detected
+      if (intensity/initialReading < INTENSITY_THRESHOLD) {
+         Sound.beep();
+         break;
+      }
+      moveForward(); // move forward until line detected
+    } 
+  }
+  
   private void moveForward() {
     leftMotor.forward();
     rightMotor.forward();
@@ -123,33 +127,29 @@ public class LightLocalizer extends Thread {
   
   private void moveForward(double distance) {
     leftMotor.rotate(Navigation.convertDistance(distance, WHEEL_RAD), true);
-    leftMotor.rotate(Navigation.convertDistance(distance, WHEEL_RAD), false);
+    rightMotor.rotate(Navigation.convertDistance(distance, WHEEL_RAD), false);
   }
   
   private void moveBackward(double distance) {
-    leftMotor.rotate(Navigation.convertDistance(-distance, WHEEL_RAD), true);
-    rightMotor.rotate(Navigation.convertDistance(-distance, WHEEL_RAD), false);
-  }
-  
-  private void stopMotors() {
-    leftMotor.stop();
-    rightMotor.stop();
+    leftMotor.rotate(-Navigation.convertDistance(distance, WHEEL_RAD), true);
+    rightMotor.rotate(-Navigation.convertDistance(distance, WHEEL_RAD), false);
   }
   
   /**
    * helper method
    */
   private void turnRight(double angle) {
-    rightMotor.rotate(-Navigation.convertAngle(angle, WHEEL_RAD), true);
-    leftMotor.rotate(Navigation.convertAngle(angle, WHEEL_RAD), false);
+    leftMotor.rotate(Navigation.convertAngle(angle, WHEEL_RAD), true);
+    rightMotor.rotate(-Navigation.convertAngle(angle, WHEEL_RAD), false);
   }
+  
   
   /**
    * helper method
    */
   private void turnLeft(double angle) {
-    rightMotor.rotate(Navigation.convertAngle(angle, WHEEL_RAD), true);
-    leftMotor.rotate(-Navigation.convertAngle(angle, WHEEL_RAD), false);
+    leftMotor.rotate(-Navigation.convertAngle(angle, WHEEL_RAD), true);
+    rightMotor.rotate(Navigation.convertAngle(angle, WHEEL_RAD), false);
   }
   
   private int recordTacho() {

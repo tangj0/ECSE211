@@ -16,6 +16,7 @@ public class Main {
   SampleProvider lsSampleProvider = L_SENSOR.getMode("Red");
   float[] lsData = new float[lsSampleProvider.sampleSize()];
     
+    
     int buttonChoice;
     do {
       LCD.clear();
