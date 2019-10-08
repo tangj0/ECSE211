@@ -21,23 +21,22 @@ public class UltrasonicLocalizer extends Thread {
   }
   
   public void run() { 
-    double dTheta = 0;
+    double dTheta;
     
     if (edgeType == RISING) {
-      dTheta = risingEdge();
+      dTheta = risingEdge(); 
     }
     else if (edgeType == FALLING) {
       dTheta = fallingEdge();
     }
+    else {
+      dTheta = -1;
+    }
     
-    // stop motors after completion of US localization
-    stopMotors();
-    
-    odometer.setTheta(odometer.getXYT()[2] + dTheta);
-    Sound.playNote(Sound.FLUTE, 440, 250); 
+    odometer.setTheta(dTheta);
     
     // physically turn robot to a heading of 0 degrees 
-    turnTo(0);
+    turnLeft(dTheta);
   }
   
   
@@ -57,14 +56,17 @@ public class UltrasonicLocalizer extends Thread {
     
     theta1 = odometer.getXYT()[2];
     
-    while(medianFilter() > RISE_CONTINUE) {
+    turnLeft(40);
+    
+    while(medianFilter() < RISE_THRESHOLD) {
       turnLeft();
     }
     
     Sound.beep();
-    theta2 = odometer.getXYT()[2];
+    stopMotors();
+    theta2 = 360 - odometer.getXYT()[2];
     
-    return correctAngle(theta1, theta2);
+    return RISE_ANGLE - (theta1 + theta2)/2;
   }
   
   /**
@@ -81,34 +83,22 @@ public class UltrasonicLocalizer extends Thread {
     Sound.beep();
     stopMotors();
     
-    theta1 = odometer.getXYT()[2];
+    theta1 = 360 - odometer.getXYT()[2];
     
-    while(medianFilter() < FALL_CONTINUE) {
+    turnRight(40);
+    
+    while(medianFilter() > FALL_THRESHOLD) {
       turnRight();
     }
     
     Sound.beep();
+    stopMotors();
     theta2 = odometer.getXYT()[2];
     
-    return correctAngle(theta1, theta2);
+    return FALL_ANGLE + (theta1 + theta2)/2;
   }
   
-  /**
-   * 
-   * @param theta1
-   * @param theta2
-   * @return
-   */
-  private double correctAngle(double theta1, double theta2) {
-    //rising edge
-    if (theta1 > theta2) {
-      return RISE_ANGLE - (theta1 + theta2)/2;
-    }
-    //falling edge
-    else {
-      return FALL_ANGLE - (theta1 + theta2)/2;
-    }
-  }
+  
   
   /**
    * helper method
@@ -132,6 +122,22 @@ public class UltrasonicLocalizer extends Thread {
   private void turnLeft() {
     leftMotor.backward();
     rightMotor.forward();
+  }
+  
+  /**
+   * helper method
+   */
+  private void turnLeft(double angle) {
+    rightMotor.rotate(Navigation.convertAngle(angle, WHEEL_RAD), true);
+    leftMotor.rotate(-Navigation.convertAngle(angle, WHEEL_RAD), false);
+  }
+  
+  /**
+   * helper method
+   */
+  private void turnRight(double angle) {
+    rightMotor.rotate(-Navigation.convertAngle(angle, WHEEL_RAD), true);
+    leftMotor.rotate(Navigation.convertAngle(angle, WHEEL_RAD), false);
   }
   
   /**

@@ -29,13 +29,16 @@ public class Main {
 
     if (buttonChoice == Button.ID_LEFT || buttonChoice == Button.ID_RIGHT) {
       UltrasonicLocalizer usLoc = new UltrasonicLocalizer(buttonChoice, usSampleProvider, usData);
+      Display display = new Display();
+      
       // create threads
       Thread odoThread = new Thread(odometer);
       Thread usLocalizerThread = new Thread(usLoc);
-
-      // start odometer and ultrasonic localizaiton
+      Thread displayThread = new Thread(display);
+      
+      // start odometer, display, and ultrasonic localization
       odoThread.start();
-      display = new Display(); // start odometer display
+      displayThread.start();
       usLocalizerThread.start(); 
 
       // Allows verification of ultrasonic localization before starting light localization
@@ -43,7 +46,7 @@ public class Main {
         System.exit(0); //exists if esc button is pressed
         
       } else {
-        // start light localization
+        // start light localization 
         LightLocalizer lightloc = new LightLocalizer(lsSampleProvider, lsData);
         Thread lightlocThread = new Thread(lightloc);
         lightlocThread.start();

@@ -68,12 +68,7 @@ public class Resources {
   /**
    * threshold to detect a rising edge
    */
-  public static final int RISE_THRESHOLD = 40;
-  
-  /**
-   * continue turning after a rising edge
-   */
-  public static final int RISE_CONTINUE = 25;
+  public static final int RISE_THRESHOLD = 40; //40
   
   /**
    * angle to detect a rising edge
@@ -83,12 +78,7 @@ public class Resources {
   /**
    * threshold to detect a falling edge
    */
-  public static final int FALL_THRESHOLD = 25;
-  
-  /**
-   * continue turning after a falling edge
-   */
-  public static final int FALL_CONTINUE = 40;
+  public static final int FALL_THRESHOLD = 25; //25
   
   /**
    * angle to detect a falling edge
@@ -98,7 +88,7 @@ public class Resources {
   /**
    * us localization speed
    */
-  public static final int US_SPEED = 100;
+  public static final int US_SPEED = 90;
   
   
   

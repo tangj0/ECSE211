@@ -99,8 +99,6 @@ public class Navigation implements Runnable{
       theta = 360 + theta;
     }
     
-    LCD.drawString("turn Angle: " + theta, 0, 3);
-    
     leftMotor.setSpeed(ROTATE_SPEED);
     rightMotor.setSpeed(ROTATE_SPEED);
     leftMotor.rotate(convertAngle(theta, WHEEL_RAD), true);
