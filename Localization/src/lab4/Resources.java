@@ -25,17 +25,6 @@ public class Resources {
   public static final double TRACK = 12.00; //12.20
   
   /**
-   * The speed at which the robot moves forward in degrees per second.
-   */ 
- public static final float FORWARD_SPEED = 170; //170
-  
-  
-  /**
-   * The speed at which the robot rotates in degrees per second.
-   */
-  public static final int ROTATE_SPEED = 100; //140
-  
-  /**
    * Timeout period in milliseconds.
    */
   public static final int TIMEOUT_PERIOD = 1000;
@@ -43,14 +32,8 @@ public class Resources {
   /**
    * The tile size in centimeters.
    */
-  public static final double TILE_SIZE = 30.48; //30.48
+  public static final double TILE_SIZE = 30.48; 
   
-  
-  //For navigation
-  /**
-   * Sensor rotation  motor speed 
-   */
-  public static final int MOTOR_SENSOR_SPEED = 60;
   
   
   //For ultrasonic sensor
@@ -96,7 +79,7 @@ public class Resources {
   /**
    * required change in intensity for light sensor line detection
    */
-  public static final double INTENSITY_THRESHOLD = 0.63; //0.75
+  public static final double INTENSITY_THRESHOLD = 0.60; //0.63, 0.75
   
   /**
    * distance from robot's center of rotation to the light sensor

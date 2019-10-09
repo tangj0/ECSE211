@@ -1,8 +1,8 @@
 package lab4;
 import static lab4.Resources.*;
-import lab4.Navigation;
 import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;
+import static lab4.Helper.*;
 
 /**
  * Light sensor localization class
@@ -28,7 +28,9 @@ public class LightLocalizer extends Thread {
     rightMotor.setSpeed(LS_SPEED);
   }
   
-
+  /**
+   * Runs the logic of the light localizer
+   */
   public void run() {
     initialReading = meanFilter();
     
@@ -43,7 +45,7 @@ public class LightLocalizer extends Thread {
     forwardTillLine();
     moveForward(LS_DISTANCE/2);
     odometer.setTheta(0);
-    findPoints();
+    find4Angles();
     
     //calculate x and y offsets from origin
     double thetaY = theta3 - theta1;
@@ -65,10 +67,13 @@ public class LightLocalizer extends Thread {
     moveForward(dy);
   }
   
-  private void findPoints() {
+  /**
+   * Method to find the 4 angles relative to the grid lines
+   */
+  private void find4Angles() {
     // both motors non-blocking to allow gridline detection while turning
-    leftMotor.rotate(Navigation.convertAngle(360, WHEEL_RAD), true);
-    rightMotor.rotate(-Navigation.convertAngle(360, WHEEL_RAD), true);
+    leftMotor.rotate(convertAngle(360, WHEEL_RAD), true);
+    rightMotor.rotate(-convertAngle(360, WHEEL_RAD), true);
     
     //robot turns clockwise, records 4 angles  
     theta1 = recordAngle();
@@ -88,6 +93,10 @@ public class LightLocalizer extends Thread {
     }
   }
   
+  /**
+   * Filter to obtain the average of MEAN_FILTER samples
+   * @return  the average of MEAN_FILTER number of samples
+   */
   private double meanFilter () {
     int sum = 0;
     for (int i = 0; i < MEAN_FILTER; i++) {
@@ -96,7 +105,11 @@ public class LightLocalizer extends Thread {
     }
     return sum/MEAN_FILTER; //return median
   }
-
+  
+  /**
+   * Get the odometer angle at each grid line
+   * @return  odometer angle at each grid line
+   */
   private double recordAngle() {
     while(leftMotor.isMoving() || rightMotor.isMoving()) {
       intensity = meanFilter();
@@ -108,6 +121,9 @@ public class LightLocalizer extends Thread {
     return -1;
   }
   
+  /**
+   * Moves robot forward until a grid line is seen
+   */
   private void forwardTillLine() {
     while (true) {
       intensity = meanFilter();
@@ -120,39 +136,4 @@ public class LightLocalizer extends Thread {
     } 
   }
   
-  private void moveForward() {
-    leftMotor.forward();
-    rightMotor.forward();
-  }
-  
-  private void moveForward(double distance) {
-    leftMotor.rotate(Navigation.convertDistance(distance, WHEEL_RAD), true);
-    rightMotor.rotate(Navigation.convertDistance(distance, WHEEL_RAD), false);
-  }
-  
-  private void moveBackward(double distance) {
-    leftMotor.rotate(-Navigation.convertDistance(distance, WHEEL_RAD), true);
-    rightMotor.rotate(-Navigation.convertDistance(distance, WHEEL_RAD), false);
-  }
-  
-  /**
-   * helper method
-   */
-  private void turnRight(double angle) {
-    leftMotor.rotate(Navigation.convertAngle(angle, WHEEL_RAD), true);
-    rightMotor.rotate(-Navigation.convertAngle(angle, WHEEL_RAD), false);
-  }
-  
-  
-  /**
-   * helper method
-   */
-  private void turnLeft(double angle) {
-    leftMotor.rotate(-Navigation.convertAngle(angle, WHEEL_RAD), true);
-    rightMotor.rotate(Navigation.convertAngle(angle, WHEEL_RAD), false);
-  }
-  
-  private int recordTacho() {
-    return (leftMotor.getTachoCount() + rightMotor.getTachoCount()) / 2;
-  }
 }

@@ -1,7 +1,7 @@
 package lab4;
 import static lab4.Resources.*;
 import java.util.Arrays;
-import static lab4.Navigation.*;
+import static lab4.Helper.*;
 import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;
 
@@ -10,7 +10,12 @@ public class UltrasonicLocalizer extends Thread {
   private SampleProvider usSampleProvider;
   private float[] usData;
   
-
+  /**
+   * class constructor
+   * @param buttonID  ID of chosen button
+   * @param usSampleProvider  ultrasonic sensor sample provider
+   * @param usData  array to store ultrasonic sensor data
+   */
   public UltrasonicLocalizer(int buttonID, SampleProvider usSampleProvider, float[] usData) {
     this.edgeType = buttonID;
     this.usSampleProvider = usSampleProvider;
@@ -20,6 +25,9 @@ public class UltrasonicLocalizer extends Thread {
     rightMotor.setSpeed(US_SPEED);
   }
   
+  /**
+   * Runs the logic of the US localizer
+   */
   public void run() { 
     double dTheta;
     
@@ -96,48 +104,6 @@ public class UltrasonicLocalizer extends Thread {
     theta2 = odometer.getXYT()[2];
     
     return FALL_ANGLE + (theta1 + theta2)/2;
-  }
-  
-  
-  
-  /**
-   * helper method
-   */
-  private void stopMotors() {
-    leftMotor.stop();
-    rightMotor.stop();
-  }
-  
-  /**
-   * helper method
-   */
-  private void turnRight() {
-    leftMotor.forward();
-    rightMotor.backward();
-  }
-  
-  /**
-   * helper method
-   */
-  private void turnLeft() {
-    leftMotor.backward();
-    rightMotor.forward();
-  }
-  
-  /**
-   * helper method
-   */
-  private void turnLeft(double angle) {
-    rightMotor.rotate(Navigation.convertAngle(angle, WHEEL_RAD), true);
-    leftMotor.rotate(-Navigation.convertAngle(angle, WHEEL_RAD), false);
-  }
-  
-  /**
-   * helper method
-   */
-  private void turnRight(double angle) {
-    rightMotor.rotate(-Navigation.convertAngle(angle, WHEEL_RAD), true);
-    leftMotor.rotate(Navigation.convertAngle(angle, WHEEL_RAD), false);
   }
   
   /**

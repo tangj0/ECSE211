@@ -8,6 +8,11 @@ import lejos.hardware.lcd.LCD;
 
 public class Main {
   public static Display display;
+  
+  /**
+   * Main entry point - instantiate objects used and set up sensor
+   * @param args
+   */
   public static void main(String[] args) {
     
   SampleProvider usSampleProvider = US_SENSOR.getMode("Distance");
