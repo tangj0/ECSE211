@@ -51,7 +51,7 @@ public class Resources {
   /**
    * threshold to detect a rising edge
    */
-  public static final int RISE_THRESHOLD = 38; //40
+  public static final int RISE_THRESHOLD = 37; //38, 40
   
   /**
    * angle to detect a rising edge
@@ -84,7 +84,7 @@ public class Resources {
   /**
    * distance from robot's center of rotation to the light sensor
    */
-  public static final double LS_DISTANCE = 6.6; //6.6 7.5
+  public static final double LS_DISTANCE = 8.0; // 7.5
   
   /**
    * Motor rotation speed for light sensor localization
@@ -128,12 +128,6 @@ public class Resources {
    */
   public static final EV3LargeRegulatedMotor rightMotor =
       new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
-  
-  /**
-   * Sensor rotation motor
-   */
-  public static final EV3MediumRegulatedMotor sensorMotor =
-      new EV3MediumRegulatedMotor(LocalEV3.get().getPort("C"));
   
   /**
    * The LCD.
